@@ -16,15 +16,14 @@
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 54%, #bbf7d0 54%, #86efac 100%);
-            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px;
             overflow-x: hidden;
         }
 
-        /* Decorative Floating Clouds */
         .cloud {
             position: fixed;
             background: rgba(255, 255, 255, 0.9);
@@ -52,21 +51,20 @@
             100% { transform: translateX(calc(100vw + 260px)); }
         }
 
-        /* Main Launcher Card */
         .hub-container {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 680px;
+            max-width: 720px;
             background: #ffffff;
             border-radius: 36px;
             border: 6px solid #ffffff;
             box-shadow: 0 18px 36px -6px rgba(2, 132, 199, 0.22), 0 8px 14px -6px rgba(0, 0, 0, 0.08);
-            padding: 28px 24px;
+            padding: 24px 22px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 18px;
         }
 
         .hub-header {
@@ -78,7 +76,7 @@
         }
 
         .hub-title {
-            font-size: clamp(1.5rem, 5vw, 2.3rem);
+            font-size: clamp(1.4rem, 5vw, 2.2rem);
             font-weight: 900;
             color: #0369a1;
             text-align: left;
@@ -88,9 +86,9 @@
             background: #e0f2fe;
             border: 3px solid #7dd3fc;
             border-radius: 50%;
-            width: 46px;
-            height: 46px;
-            font-size: 1.35rem;
+            width: 44px;
+            height: 44px;
+            font-size: 1.3rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -104,46 +102,6 @@
             transform: rotate(90deg) scale(1.06);
         }
 
-        /* Landscape Lock Fallback for Mobile Portrait */
-        body.force-landscape {
-            padding: 0;
-            overflow: hidden;
-        }
-        body.force-landscape .hub-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 100dvh;
-            max-width: 100dvh;
-            height: 100dvw;
-            max-height: 100dvw;
-            transform: translate(-50%, -50%) rotate(90deg);
-            border-radius: 0;
-            overflow: hidden;
-            justify-content: space-between;
-            padding: 10px 18px;
-            gap: 8px;
-        }
-
-        /* Compact Landscape Fit (Both Native Orientation & Forced Rotate) */
-        @media (orientation: landscape) and (max-height: 500px) {
-            body { padding: 6px; overflow: hidden; }
-            .hub-container { padding: 10px 16px; gap: 8px; max-height: 96dvh; }
-            .hub-title { font-size: 1.35rem; }
-            .rotate-btn { width: 38px; height: 38px; font-size: 1.1rem; }
-            .games-list { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-            .games-list .game-btn:last-child { grid-column: auto; }
-            .game-btn { padding: 8px 12px; font-size: 0.9rem; border-radius: 16px; gap: 8px; }
-            .game-icon { font-size: 1.6rem; }
-        }
-        body.force-landscape .hub-title { font-size: 1.35rem; }
-        body.force-landscape .rotate-btn { width: 38px; height: 38px; font-size: 1.1rem; }
-        body.force-landscape .games-list { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        body.force-landscape .games-list .game-btn:last-child { grid-column: auto; }
-        body.force-landscape .game-btn { padding: 8px 12px; font-size: 0.9rem; border-radius: 16px; gap: 8px; }
-        body.force-landscape .game-icon { font-size: 1.6rem; }
-
-        /* 5 Game Buttons List */
         .games-list {
             width: 100%;
             display: grid;
@@ -151,7 +109,7 @@
             gap: 14px;
         }
 
-        @media (min-width: 640px) {
+        @media (min-width: 600px) {
             .games-list {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -168,7 +126,7 @@
             padding: 14px 18px;
             border-radius: 24px;
             text-decoration: none;
-            font-size: clamp(1.05rem, 3.4vw, 1.35rem);
+            font-size: clamp(1rem, 3.2vw, 1.3rem);
             font-weight: 900;
             color: #ffffff;
             transition: transform 0.15s ease, filter 0.15s ease;
@@ -184,12 +142,11 @@
         }
 
         .game-icon {
-            font-size: 2.3rem;
+            font-size: 2.2rem;
             line-height: 1;
             flex-shrink: 0;
         }
 
-        /* Individual Vibrant Toy Button Colors */
         .btn-addition {
             background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
             border: 4px solid #bae6fd;
@@ -220,6 +177,80 @@
             border: 4px solid #fee2e2;
             box-shadow: 0 7px 0 #991b1b;
         }
+
+        /* Single-Screen Android Landscape Fit */
+        @media (orientation: landscape) and (max-height: 550px) {
+            body {
+                height: 100dvh;
+                padding: 6px;
+                overflow: hidden;
+            }
+            .hub-container {
+                height: calc(100dvh - 12px);
+                max-width: 100%;
+                padding: 10px 16px;
+                gap: 8px;
+                border-radius: 22px;
+                border-width: 3px;
+                justify-content: space-between;
+            }
+            .hub-title { font-size: 1.25rem; }
+            .rotate-btn { width: 34px; height: 34px; font-size: 1rem; }
+            .games-list {
+                flex: 1;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                align-content: stretch;
+            }
+            .games-list .game-btn:last-child { grid-column: auto; }
+            .game-btn {
+                padding: 8px 12px;
+                font-size: 0.92rem;
+                border-radius: 16px;
+                border-width: 3px;
+                box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+                gap: 8px;
+            }
+            .game-icon { font-size: 1.55rem; }
+        }
+
+        /* Forced Landscape Rotate Mode */
+        body.force-landscape {
+            padding: 0;
+            overflow: hidden;
+        }
+        body.force-landscape .hub-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100dvh;
+            max-width: 100dvh;
+            height: 100dvw;
+            max-height: 100dvw;
+            transform: translate(-50%, -50%) rotate(90deg);
+            border-radius: 0;
+            border-width: 3px;
+            overflow: hidden;
+            justify-content: space-between;
+            padding: 10px 16px;
+            gap: 8px;
+        }
+        body.force-landscape .hub-title { font-size: 1.25rem; }
+        body.force-landscape .rotate-btn { width: 34px; height: 34px; font-size: 1rem; }
+        body.force-landscape .games-list {
+            flex: 1;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        body.force-landscape .games-list .game-btn:last-child { grid-column: auto; }
+        body.force-landscape .game-btn {
+            padding: 8px 12px;
+            font-size: 0.92rem;
+            border-radius: 16px;
+            border-width: 3px;
+            gap: 8px;
+        }
+        body.force-landscape .game-icon { font-size: 1.55rem; }
     </style>
 </head>
 <body>
@@ -273,19 +304,13 @@
                         await screen.orientation.lock('landscape');
                         return;
                     }
-                } catch (err) {
-                    // Fallback to CSS 90-degree landscape rotation on mobile browsers
-                }
+                } catch (err) {}
                 document.body.classList.add('force-landscape');
             } else {
                 document.body.classList.remove('force-landscape');
                 try {
-                    if (screen.orientation && screen.orientation.unlock) {
-                        screen.orientation.unlock();
-                    }
-                    if (document.fullscreenElement && document.exitFullscreen) {
-                        await document.exitFullscreen();
-                    }
+                    if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+                    if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
                 } catch (err) {}
             }
         }

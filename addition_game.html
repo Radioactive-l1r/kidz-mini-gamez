@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Adventure: Addition Fun!</title>
     <style>
-        /* CSS Variables for a bright, kid-friendly palette */
         :root {
             --bg-sky: #e0f2fe;
             --bg-grass: #dcfce7;
@@ -28,7 +27,6 @@
             --shadow-btn: 0 7px 0px;
         }
 
-        /* Reset and Base Styles */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -40,7 +38,7 @@
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 55%, #bbf7d0 55%, #86efac 100%);
-            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -50,7 +48,6 @@
             padding: 16px;
         }
 
-        /* Decorative Floating Clouds & Sparkles */
         .cloud {
             position: fixed;
             background: rgba(255, 255, 255, 0.9);
@@ -78,7 +75,6 @@
             100% { transform: translateX(calc(100vw + 260px)); }
         }
 
-        /* Main Game Container */
         .game-container {
             position: relative;
             z-index: 10;
@@ -94,7 +90,6 @@
             gap: 16px;
         }
 
-        /* One-Line Instruction Pill */
         .play-hint {
             align-self: center;
             font-size: 1.05rem;
@@ -107,7 +102,6 @@
             text-align: center;
         }
 
-        /* Top Header Bar */
         .header-bar {
             display: flex;
             flex-wrap: wrap;
@@ -118,7 +112,6 @@
             border-bottom: 3px dashed #e2e8f0;
         }
 
-        /* Mode Toggle Pills */
         .mode-selector {
             display: flex;
             background: #f1f5f9;
@@ -146,7 +139,6 @@
             box-shadow: 0 4px 0 var(--primary-blue-dark);
         }
 
-        /* Stats & Audio Controls */
         .controls-group {
             display: flex;
             align-items: center;
@@ -191,86 +183,6 @@
             transform: scale(1.06);
         }
 
-        .icon-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Mobile Responsive & Rotate Landscape Mode */
-        @media (max-width: 540px) {
-            body { padding: 8px; }
-            .game-container { padding: 14px 12px; border-radius: 24px; gap: 12px; }
-            .mode-btn { padding: 7px 12px; font-size: 0.9rem; }
-            .stat-badge { padding: 5px 10px; font-size: 0.95rem; }
-            .icon-btn { width: 38px; height: 38px; font-size: 1.15rem; }
-            .equation-board { padding: 12px 10px; gap: 8px; }
-            .num-box { min-width: 64px; padding: 6px 12px; font-size: 2.1rem; }
-            .answer-slot { min-width: 82px; min-height: 66px; padding: 6px 12px; font-size: 2.1rem; }
-            .aid-group { max-width: 45%; padding: 6px 8px; }
-            .aid-item { font-size: 1.35rem; }
-            .tile-slot { height: 70px; }
-            .choice-tile { font-size: 1.9rem; }
-        }
-
-        body.force-landscape { padding: 0; overflow: hidden; }
-        body.force-landscape .game-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 100dvh;
-            max-width: 100dvh;
-            height: 100dvw;
-            max-height: 100dvw;
-            transform: translate(-50%, -50%) rotate(90deg);
-            border-radius: 0;
-            overflow: hidden;
-            justify-content: space-between;
-            padding: 8px 16px;
-            gap: 6px;
-        }
-
-        /* No-Scroll Compact Landscape Layout (Native & Forced Rotate) */
-        @media (orientation: landscape) and (max-height: 500px) {
-            body { padding: 4px; overflow: hidden; }
-            .game-container { padding: 8px 14px; gap: 6px; max-height: 98dvh; border-radius: 20px; }
-            .header-bar { padding-bottom: 4px; }
-            .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
-            .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
-            .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
-            .progress-track { height: 12px; }
-            .play-area { gap: 6px; padding: 0; }
-            .play-hint { padding: 3px 12px; font-size: 0.85rem; }
-            .equation-board { padding: 6px 12px; gap: 8px; border-radius: 18px; }
-            .num-box { min-width: 56px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
-            .answer-slot { min-width: 72px; min-height: 50px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
-            .operator { font-size: 1.65rem; }
-            .visual-aid-container { min-height: 44px; padding: 4px 8px; gap: 8px; border-radius: 14px; }
-            .aid-group { padding: 3px 6px; gap: 3px; }
-            .aid-item { font-size: 1.15rem; }
-            .choices-tray { padding: 6px 10px; border-radius: 18px; }
-            .choices-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
-            .tile-slot { height: 52px; border-radius: 14px; }
-            .choice-tile { font-size: 1.55rem; border-radius: 14px; }
-        }
-        body.force-landscape .header-bar { padding-bottom: 4px; }
-        body.force-landscape .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
-        body.force-landscape .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
-        body.force-landscape .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
-        body.force-landscape .progress-track { height: 12px; }
-        body.force-landscape .play-area { gap: 6px; padding: 0; }
-        body.force-landscape .play-hint { padding: 3px 12px; font-size: 0.85rem; }
-        body.force-landscape .equation-board { padding: 6px 12px; gap: 8px; border-radius: 18px; }
-        body.force-landscape .num-box { min-width: 56px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
-        body.force-landscape .answer-slot { min-width: 72px; min-height: 50px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
-        body.force-landscape .operator { font-size: 1.65rem; }
-        body.force-landscape .visual-aid-container { min-height: 44px; padding: 4px 8px; gap: 8px; border-radius: 14px; }
-        body.force-landscape .aid-group { padding: 3px 6px; gap: 3px; }
-        body.force-landscape .aid-item { font-size: 1.15rem; }
-        body.force-landscape .choices-tray { padding: 6px 10px; border-radius: 18px; }
-        body.force-landscape .choices-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        body.force-landscape .tile-slot { height: 52px; border-radius: 14px; }
-        body.force-landscape .choice-tile { font-size: 1.55rem; border-radius: 14px; }
-
-        /* Progress Bar Section */
         .progress-wrapper {
             display: flex;
             align-items: center;
@@ -302,13 +214,20 @@
             text-align: right;
         }
 
-        /* Question & Visual Aid Area */
         .play-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 18px;
-            padding: 4px 0;
+            width: 100%;
+        }
+
+        .stage-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
         }
 
         .equation-board {
@@ -350,7 +269,6 @@
             color: var(--text-muted);
         }
 
-        /* Glowing Drop-Zone Target Box */
         .answer-slot {
             position: relative;
             font-size: clamp(2.6rem, 6.5vw, 4rem);
@@ -400,7 +318,6 @@
             animation: shakeHorizontal 0.4s ease;
         }
 
-        /* Visual Counting Aid Container */
         .visual-aid-container {
             width: 100%;
             min-height: 92px;
@@ -450,17 +367,9 @@
             transition: transform 0.15s;
         }
 
-        .aid-item:hover {
-            transform: scale(1.25);
-        }
+        .aid-item:hover { transform: scale(1.25); }
+        .aid-plus { font-size: 1.8rem; font-weight: 900; color: #d97706; }
 
-        .aid-plus {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #d97706;
-        }
-
-        /* Base-10 Blocks for Grade 2 larger numbers */
         .ten-rod {
             display: inline-flex;
             flex-direction: column;
@@ -473,10 +382,7 @@
             margin: 2px;
             animation: popIn 0.35s backwards;
         }
-        .ten-rod span {
-            flex: 1;
-            border-bottom: 1px solid rgba(255,255,255,0.6);
-        }
+        .ten-rod span { flex: 1; border-bottom: 1px solid rgba(255,255,255,0.6); }
         .one-cube {
             display: inline-block;
             width: 16px;
@@ -493,7 +399,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Draggable Toy Number Tiles Tray */
         .choices-tray {
             background: #f1f5f9;
             border: 3px dashed #cbd5e1;
@@ -515,7 +420,6 @@
             }
         }
 
-        /* Slot placeholder so layout doesn't jump while dragging a tile */
         .tile-slot {
             position: relative;
             height: 86px;
@@ -527,7 +431,6 @@
             justify-content: center;
         }
 
-        /* Playful Chunky Draggable Toy Tile */
         .choice-tile {
             position: relative;
             width: 100%;
@@ -549,31 +452,10 @@
             animation: tileIdleBob 2.6s ease-in-out infinite;
         }
 
-        /* Staggered whimsical idle animations & vibrant toy borders for each tile */
-        .tile-slot:nth-child(1) .choice-tile {
-            border-color: #38bdf8;
-            box-shadow: var(--shadow-btn) #0284c7;
-            color: #0369a1;
-            animation-delay: 0s;
-        }
-        .tile-slot:nth-child(2) .choice-tile {
-            border-color: #c084fc;
-            box-shadow: var(--shadow-btn) #9333ea;
-            color: #7e22ce;
-            animation-delay: 0.45s;
-        }
-        .tile-slot:nth-child(3) .choice-tile {
-            border-color: #fb923c;
-            box-shadow: var(--shadow-btn) #ea580c;
-            color: #c2410c;
-            animation-delay: 0.9s;
-        }
-        .tile-slot:nth-child(4) .choice-tile {
-            border-color: #f472b6;
-            box-shadow: var(--shadow-btn) #db2777;
-            color: #be185d;
-            animation-delay: 1.35s;
-        }
+        .tile-slot:nth-child(1) .choice-tile { border-color: #38bdf8; box-shadow: var(--shadow-btn) #0284c7; color: #0369a1; animation-delay: 0s; }
+        .tile-slot:nth-child(2) .choice-tile { border-color: #c084fc; box-shadow: var(--shadow-btn) #9333ea; color: #7e22ce; animation-delay: 0.45s; }
+        .tile-slot:nth-child(3) .choice-tile { border-color: #fb923c; box-shadow: var(--shadow-btn) #ea580c; color: #c2410c; animation-delay: 0.9s; }
+        .tile-slot:nth-child(4) .choice-tile { border-color: #f472b6; box-shadow: var(--shadow-btn) #db2777; color: #be185d; animation-delay: 1.35s; }
 
         @keyframes tileIdleBob {
             0%, 100% { transform: translateY(0px) rotate(-1.8deg); }
@@ -585,7 +467,6 @@
             animation-play-state: paused;
         }
 
-        /* Active Dragging State */
         .choice-tile.dragging {
             position: fixed;
             z-index: 9999;
@@ -594,7 +475,6 @@
             transform: scale(1.18) rotate(-6deg);
             box-shadow: 0 22px 35px rgba(0, 0, 0, 0.25), 0 8px 0 rgba(2, 132, 199, 0.4);
             pointer-events: none;
-            transition: transform 0.08s ease-out;
         }
 
         .choice-tile.correct {
@@ -615,25 +495,8 @@
             animation: none;
         }
 
-        .choice-tile.disabled {
-            pointer-events: none;
-        }
-
-        .choice-tile.snap-wobble {
-            animation: shakeHorizontal 0.4s ease !important;
-        }
-
-        .key-hint {
-            position: absolute;
-            top: 7px;
-            left: 11px;
-            font-size: 0.72rem;
-            font-weight: 800;
-            color: #94a3b8;
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 6px;
-        }
+        .choice-tile.disabled { pointer-events: none; }
+        .choice-tile.snap-wobble { animation: shakeHorizontal 0.4s ease !important; }
 
         @keyframes shakeHorizontal {
             0%, 100% { transform: translateX(0); }
@@ -647,7 +510,6 @@
             70% { transform: scale(0.96); }
         }
 
-        /* Celebration Trophy Screen */
         .celebration-screen {
             display: none;
             flex-direction: column;
@@ -655,107 +517,185 @@
             text-align: center;
             gap: 20px;
             padding: 24px 12px;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        .celebration-screen.active {
-            display: flex;
-        }
-
-        .trophy-icon {
-            font-size: 6rem;
-            filter: drop-shadow(0 10px 15px rgba(234, 179, 8, 0.4));
-            animation: trophyFloat 2s ease-in-out infinite;
-        }
-
-        @keyframes trophyFloat {
-            0%, 100% { transform: translateY(0) rotate(-3deg); }
-            50% { transform: translateY(-12px) rotate(3deg); }
-        }
-
-        .celebration-title {
-            font-size: 2.3rem;
-            font-weight: 900;
-            color: var(--primary-blue-dark);
-        }
-
-        .celebration-stats {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .final-stat-box {
-            background: #f8fafc;
-            border: 3px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 16px 24px;
-            min-width: 140px;
-        }
-
-        .final-stat-val {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--purple-fun-dark);
-        }
-
-        .final-stat-label {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-muted);
-        }
-
+        .celebration-screen.active { display: flex; }
+        .trophy-icon { font-size: 6rem; filter: drop-shadow(0 10px 15px rgba(234, 179, 8, 0.4)); }
+        .celebration-title { font-size: 2.3rem; font-weight: 900; color: var(--primary-blue-dark); }
+        .celebration-stats { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+        .final-stat-box { background: #f8fafc; border: 3px solid #e2e8f0; border-radius: 20px; padding: 16px 24px; min-width: 140px; }
+        .final-stat-val { font-size: 2rem; font-weight: 900; color: var(--purple-fun-dark); }
+        .final-stat-label { font-size: 0.95rem; font-weight: 700; color: var(--text-muted); }
         .play-again-btn {
-            background: var(--success-green);
-            color: white;
-            border: none;
-            border-radius: 24px;
-            padding: 18px 40px;
-            font-size: 1.5rem;
-            font-weight: 900;
-            font-family: inherit;
-            cursor: pointer;
-            box-shadow: var(--shadow-btn) var(--success-green-dark);
-            transition: all 0.15s ease;
-            margin-top: 8px;
+            background: var(--success-green); color: white; border: none; border-radius: 24px;
+            padding: 18px 40px; font-size: 1.5rem; font-weight: 900; font-family: inherit;
+            cursor: pointer; box-shadow: var(--shadow-btn) var(--success-green-dark);
         }
 
-        .play-again-btn:hover {
-            transform: translateY(-3px);
-            background: #16a34a;
-        }
-
-        .play-again-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 var(--success-green-dark);
-        }
-
-        /* Confetti Canvas */
         #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 100;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100;
         }
+
+        /* Portrait Mobile */
+        @media (max-width: 540px) and (orientation: portrait) {
+            body { padding: 8px; }
+            .game-container { padding: 14px 12px; border-radius: 24px; gap: 12px; }
+            .mode-btn { padding: 7px 12px; font-size: 0.9rem; }
+            .stat-badge { padding: 5px 10px; font-size: 0.95rem; }
+            .icon-btn { width: 38px; height: 38px; font-size: 1.15rem; }
+            .equation-board { padding: 12px 10px; gap: 8px; }
+            .num-box { min-width: 64px; padding: 6px 12px; font-size: 2.1rem; }
+            .answer-slot { min-width: 82px; min-height: 66px; padding: 6px 12px; font-size: 2.1rem; }
+            .aid-group { max-width: 45%; padding: 6px 8px; }
+            .aid-item { font-size: 1.35rem; }
+            .tile-slot { height: 70px; }
+            .choice-tile { font-size: 1.9rem; }
+        }
+
+        /* =========================================================
+           SINGLE-SCREEN ANDROID LANDSCAPE (SIDE-BY-SIDE LAYOUT)
+           ========================================================= */
+        @media (orientation: landscape) and (max-height: 550px) {
+            body {
+                height: 100dvh;
+                padding: 6px;
+                overflow: hidden;
+            }
+            .game-container {
+                height: calc(100dvh - 12px);
+                max-width: 100%;
+                padding: 8px 14px;
+                gap: 6px;
+                border-radius: 20px;
+                border-width: 3px;
+                justify-content: space-between;
+            }
+            .header-bar { padding-bottom: 4px; gap: 6px; }
+            .mode-btn { padding: 5px 10px; font-size: 0.84rem; border-radius: 12px; }
+            .stat-badge { padding: 3px 8px; font-size: 0.85rem; border-radius: 12px; }
+            .icon-btn { width: 32px; height: 32px; font-size: 0.95rem; }
+            .progress-track { height: 10px; }
+            .progress-text { font-size: 0.82rem; min-width: 48px; }
+
+            /* Side-by-Side Arena: Left Stage + Right 2x2 Options */
+            .play-area {
+                flex: 1;
+                min-height: 0;
+                flex-direction: row;
+                align-items: stretch;
+                gap: 10px;
+            }
+            .stage-column {
+                flex: 1.35;
+                min-width: 0;
+                justify-content: space-between;
+                gap: 6px;
+            }
+            .play-hint {
+                padding: 3px 12px;
+                font-size: 0.82rem;
+            }
+            .equation-board {
+                padding: 8px 10px;
+                gap: 8px;
+                border-radius: 18px;
+                border-width: 3px;
+            }
+            .num-box {
+                min-width: 54px;
+                padding: 4px 10px;
+                font-size: 1.75rem;
+                border-radius: 14px;
+            }
+            .answer-slot {
+                min-width: 68px;
+                min-height: 48px;
+                padding: 4px 10px;
+                font-size: 1.75rem;
+                border-radius: 14px;
+            }
+            .operator { font-size: 1.55rem; }
+            .visual-aid-container {
+                flex: 1;
+                min-height: 0;
+                padding: 6px 8px;
+                gap: 8px;
+                border-radius: 16px;
+            }
+            .aid-group { padding: 4px 6px; gap: 3px; }
+            .aid-item { font-size: 1.15rem; }
+            .ten-rod { height: 34px; width: 12px; }
+            .one-cube { width: 12px; height: 12px; }
+
+            .choices-tray {
+                flex: 0.85;
+                width: auto;
+                padding: 8px;
+                border-radius: 18px;
+                display: flex;
+                align-items: center;
+            }
+            .choices-grid {
+                grid-template-columns: repeat(2, 1fr);
+                height: 100%;
+                gap: 8px;
+            }
+            .tile-slot {
+                height: 100%;
+                min-height: 54px;
+                border-radius: 14px;
+            }
+            .choice-tile {
+                font-size: 1.65rem;
+                border-radius: 14px;
+                box-shadow: 0 4px 0 #38bdf8;
+            }
+        }
+
+        /* Forced Rotate Fallback */
+        body.force-landscape { padding: 0; overflow: hidden; }
+        body.force-landscape .game-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100dvh;
+            max-width: 100dvh;
+            height: 100dvw;
+            max-height: 100dvw;
+            transform: translate(-50%, -50%) rotate(90deg);
+            border-radius: 0;
+            border-width: 3px;
+            overflow: hidden;
+            justify-content: space-between;
+            padding: 8px 14px;
+            gap: 6px;
+        }
+        body.force-landscape .header-bar { padding-bottom: 4px; gap: 6px; }
+        body.force-landscape .mode-btn { padding: 5px 10px; font-size: 0.84rem; border-radius: 12px; }
+        body.force-landscape .stat-badge { padding: 3px 8px; font-size: 0.85rem; }
+        body.force-landscape .icon-btn { width: 32px; height: 32px; font-size: 0.95rem; }
+        body.force-landscape .progress-track { height: 10px; }
+        body.force-landscape .play-area { flex: 1; min-height: 0; flex-direction: row; align-items: stretch; gap: 10px; }
+        body.force-landscape .stage-column { flex: 1.35; min-width: 0; justify-content: space-between; gap: 6px; }
+        body.force-landscape .play-hint { padding: 3px 12px; font-size: 0.82rem; }
+        body.force-landscape .equation-board { padding: 8px 10px; gap: 8px; border-radius: 18px; }
+        body.force-landscape .num-box { min-width: 54px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
+        body.force-landscape .answer-slot { min-width: 68px; min-height: 48px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
+        body.force-landscape .operator { font-size: 1.55rem; }
+        body.force-landscape .visual-aid-container { flex: 1; min-height: 0; padding: 6px 8px; gap: 8px; border-radius: 16px; }
+        body.force-landscape .aid-item { font-size: 1.15rem; }
+        body.force-landscape .choices-tray { flex: 0.85; width: auto; padding: 8px; border-radius: 18px; display: flex; align-items: center; }
+        body.force-landscape .choices-grid { grid-template-columns: repeat(2, 1fr); height: 100%; gap: 8px; }
+        body.force-landscape .tile-slot { height: 100%; min-height: 54px; border-radius: 14px; }
+        body.force-landscape .choice-tile { font-size: 1.65rem; border-radius: 14px; }
     </style>
 </head>
 <body>
 
-    <!-- Decorative Clouds -->
     <div class="cloud cloud-1"></div>
     <div class="cloud cloud-2"></div>
-
-    <!-- Confetti Overlay -->
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- Main Game Card -->
     <main class="game-container" id="game-card">
-        
-        <!-- Header: Difficulty Mode, Stars, Streak, Mute -->
         <header class="header-bar">
             <div class="mode-selector" role="group" aria-label="Grade Level">
                 <button class="mode-btn active" id="btn-grade1" onclick="setGrade(1)">🌟 Grade 1</button>
@@ -771,16 +711,11 @@
                     <span>🔥</span>
                     <span id="streak-count">0</span>
                 </div>
-                <button class="icon-btn" id="rotate-btn" onclick="toggleLandscapeMode()" title="Rotate Screen" aria-label="Rotate Screen">
-                    🔄
-                </button>
-                <button class="icon-btn" id="mute-btn" onclick="toggleMute()" title="Toggle Sound" aria-label="Toggle Sound">
-                    🔊
-                </button>
+                <button class="icon-btn" id="rotate-btn" onclick="toggleLandscapeMode()" title="Rotate Screen" aria-label="Rotate Screen">🔄</button>
+                <button class="icon-btn" id="mute-btn" onclick="toggleMute()" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
             </div>
         </header>
 
-        <!-- Round Progress Bar -->
         <div class="progress-wrapper" id="progress-section">
             <div class="progress-track">
                 <div class="progress-fill" id="progress-fill"></div>
@@ -788,39 +723,29 @@
             <div class="progress-text" id="progress-text">1 / 10</div>
         </div>
 
-        <!-- Active Gameplay View -->
         <section class="play-area" id="play-area">
-            
-            <div class="play-hint">Drag the right number into the yellow <strong>?</strong> box! ➕✨</div>
+            <div class="stage-column">
+                <div class="play-hint">Drag the right number into the yellow <strong>?</strong> box! ➕✨</div>
 
-            <!-- Number Equation with Drop Zone -->
-            <div class="equation-board" aria-live="polite">
-                <div class="num-box" id="num1">3</div>
-                <div class="operator">+</div>
-                <div class="num-box second" id="num2">4</div>
-                <div class="operator">=</div>
-                <div class="answer-slot" id="answer-slot" aria-label="Drop answer here">?</div>
-            </div>
-
-            <!-- Visual Counting Aids (Fruits, Stars, or Base-10 Blocks) -->
-            <div class="visual-aid-container" id="visual-aid" title="Tap the pictures to count!">
-                <!-- Populated dynamically by JS -->
-            </div>
-
-            <!-- 4 Floating Draggable Number Tiles -->
-            <div class="choices-tray">
-                <div class="choices-grid" id="choices-grid">
-                    <!-- Populated dynamically by JS -->
+                <div class="equation-board" aria-live="polite">
+                    <div class="num-box" id="num1">3</div>
+                    <div class="operator">+</div>
+                    <div class="num-box second" id="num2">4</div>
+                    <div class="operator">=</div>
+                    <div class="answer-slot" id="answer-slot" aria-label="Drop answer here">?</div>
                 </div>
+
+                <div class="visual-aid-container" id="visual-aid" title="Tap the pictures to count!"></div>
             </div>
 
+            <div class="choices-tray">
+                <div class="choices-grid" id="choices-grid"></div>
+            </div>
         </section>
 
-        <!-- End-of-Round Celebration Trophy Screen -->
         <section class="celebration-screen" id="celebration-screen">
             <div class="trophy-icon">🏆</div>
             <h1 class="celebration-title">Awesome Job!</h1>
-            
             <div class="celebration-stats">
                 <div class="final-stat-box">
                     <div class="final-stat-val" id="final-stars">10 ⭐</div>
@@ -831,31 +756,16 @@
                     <div class="final-stat-label">Streak</div>
                 </div>
             </div>
-
-            <button class="play-again-btn" onclick="startNewRound()">
-                Play Again! 🎮
-            </button>
+            <button class="play-again-btn" onclick="startNewRound()">Play Again! 🎮</button>
         </section>
-
     </main>
 
     <script>
-        /* =========================================
-           GAME STATE & CONFIGURATION
-           ========================================= */
         const state = {
-            grade: 1,
-            stars: 0,
-            streak: 0,
-            bestStreak: 0,
-            questionIndex: 0,
-            totalQuestions: 10,
-            num1: 3,
-            num2: 4,
-            answer: 7,
-            isSolved: false,
-            isMuted: false,
-            firstTry: true
+            grade: 1, stars: 0, streak: 0, bestStreak: 0,
+            questionIndex: 0, totalQuestions: 10,
+            num1: 3, num2: 4, answer: 7,
+            isSolved: false, isMuted: false, firstTry: true
         };
 
         const countingEmojis = ['🍎', '⭐', '🚀', '🍓', '🐶', '🎈', '🍪', '🦋', '⚽', '🦖'];
@@ -880,67 +790,43 @@
             finalStreak: document.getElementById('final-streak')
         };
 
-        /* =========================================
-           WEB AUDIO SYNTHESIZER (NO EXTERNAL FILES)
-           ========================================= */
         let audioCtx = null;
 
         function ensureAudio() {
             if (!audioCtx) {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (AudioContext) {
-                    audioCtx = new AudioContext();
-                }
+                if (AudioContext) audioCtx = new AudioContext();
             }
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         function playTone(freq, type = 'sine', duration = 0.15, delay = 0, volume = 0.2) {
             if (state.isMuted) return;
             ensureAudio();
             if (!audioCtx) return;
-
             const now = audioCtx.currentTime + delay;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-
             osc.type = type;
             osc.frequency.setValueAtTime(freq, now);
-
             gain.gain.setValueAtTime(0.001, now);
             gain.gain.exponentialRampToValueAtTime(volume, now + 0.02);
             gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-
             osc.start(now);
             osc.stop(now + duration + 0.02);
         }
 
-        function playPickupSound() {
-            playTone(440, 'sine', 0.09, 0, 0.15);
-            playTone(587.33, 'sine', 0.1, 0.04, 0.15);
-        }
-
-        function playCountPop() {
-            playTone(520 + Math.random() * 140, 'triangle', 0.08, 0, 0.15);
-        }
-
+        function playPickupSound() { playTone(440, 'sine', 0.09, 0, 0.15); playTone(587.33, 'sine', 0.1, 0.04, 0.15); }
+        function playCountPop() { playTone(520 + Math.random() * 140, 'triangle', 0.08, 0, 0.15); }
         function playSuccessSound() {
-            playTone(523.25, 'triangle', 0.18, 0, 0.25);     // C5
-            playTone(659.25, 'triangle', 0.18, 0.09, 0.25);  // E5
-            playTone(783.99, 'triangle', 0.18, 0.18, 0.25);  // G5
-            playTone(1046.50, 'triangle', 0.35, 0.27, 0.28); // C6
+            playTone(523.25, 'triangle', 0.18, 0, 0.25);
+            playTone(659.25, 'triangle', 0.18, 0.09, 0.25);
+            playTone(783.99, 'triangle', 0.18, 0.18, 0.25);
+            playTone(1046.50, 'triangle', 0.35, 0.27, 0.28);
         }
-
-        function playGentleTryAgain() {
-            playTone(311.13, 'sine', 0.18, 0, 0.18);   // Eb4
-            playTone(261.63, 'sine', 0.24, 0.12, 0.18); // C4
-        }
-
+        function playGentleTryAgain() { playTone(311.13, 'sine', 0.18, 0, 0.18); playTone(261.63, 'sine', 0.24, 0.12, 0.18); }
         function playVictoryFanfare() {
             const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
             const times = [0, 0.12, 0.24, 0.36, 0.54, 0.68];
@@ -950,9 +836,7 @@
         function toggleMute() {
             state.isMuted = !state.isMuted;
             dom.muteBtn.textContent = state.isMuted ? '🔇' : '🔊';
-            if (!state.isMuted) {
-                playPickupSound();
-            }
+            if (!state.isMuted) playPickupSound();
         }
 
         async function toggleLandscapeMode() {
@@ -977,9 +861,6 @@
             }
         }
 
-        /* =========================================
-           GRADE & QUESTION GENERATION
-           ========================================= */
         function setGrade(gradeLevel) {
             state.grade = gradeLevel;
             dom.btnGrade1.classList.toggle('active', gradeLevel === 1);
@@ -998,35 +879,21 @@
             nextQuestion();
         }
 
-        function randInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+        function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
         function generateProblem() {
             let a, b;
             if (state.grade === 1) {
-                // Grade 1: gentle ramp-up within 10 first, then up to 18
-                if (state.questionIndex < 5) {
-                    a = randInt(1, 6);
-                    b = randInt(1, 10 - a);
-                } else {
-                    a = randInt(2, 9);
-                    b = randInt(2, 9);
-                }
+                if (state.questionIndex < 5) { a = randInt(1, 6); b = randInt(1, 10 - a); }
+                else { a = randInt(2, 9); b = randInt(2, 9); }
             } else {
-                // Grade 2: two-digit + one-digit or two-digit without heavy regrouping
                 if (state.questionIndex < 5) {
-                    const tens = randInt(1, 4) * 10;
-                    const onesA = randInt(1, 5);
-                    a = tens + onesA;
-                    b = randInt(2, 9 - onesA);
+                    const tens = randInt(1, 4) * 10; const onesA = randInt(1, 5);
+                    a = tens + onesA; b = randInt(2, 9 - onesA);
                 } else {
-                    const tensA = randInt(1, 4) * 10;
-                    const tensB = randInt(1, 4) * 10;
-                    const onesA = randInt(1, 5);
-                    const onesB = randInt(1, 9 - onesA);
-                    a = tensA + onesA;
-                    b = tensB + onesB;
+                    const tensA = randInt(1, 4) * 10; const tensB = randInt(1, 4) * 10;
+                    const onesA = randInt(1, 5); const onesB = randInt(1, 9 - onesA);
+                    a = tensA + onesA; b = tensB + onesB;
                 }
             }
             return { a, b, sum: a + b };
@@ -1035,16 +902,10 @@
         function generateChoices(correctSum) {
             const choices = new Set([correctSum]);
             const offsets = [-3, -2, -1, 1, 2, 3, 4, 10, -10];
-
             while (choices.size < 4) {
-                const offset = offsets[randInt(0, offsets.length - 1)];
-                const candidate = correctSum + offset;
-                if (candidate >= 1 && candidate <= 99 && candidate !== correctSum) {
-                    choices.add(candidate);
-                }
+                const candidate = correctSum + offsets[randInt(0, offsets.length - 1)];
+                if (candidate >= 1 && candidate <= 99 && candidate !== correctSum) choices.add(candidate);
             }
-
-            // Fisher-Yates shuffle
             const arr = Array.from(choices);
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -1056,8 +917,6 @@
         function renderVisualAid(a, b) {
             dom.visualAid.innerHTML = '';
             dom.visualAid.classList.remove('highlight-hint');
-
-            // Use emojis when both numbers are <= 10, otherwise use Base-10 tens rods & ones cubes
             if (a <= 10 && b <= 10) {
                 const emoji = countingEmojis[state.questionIndex % countingEmojis.length];
                 const group1 = document.createElement('div');
@@ -1067,18 +926,12 @@
                     item.className = 'aid-item';
                     item.textContent = emoji;
                     item.style.animationDelay = `${i * 0.04}s`;
-                    item.onclick = () => {
-                        playCountPop();
-                        item.style.transform = 'scale(1.35)';
-                        setTimeout(() => (item.style.transform = ''), 180);
-                    };
+                    item.onclick = () => { playCountPop(); item.style.transform = 'scale(1.35)'; setTimeout(() => (item.style.transform = ''), 180); };
                     group1.appendChild(item);
                 }
-
                 const plus = document.createElement('div');
                 plus.className = 'aid-plus';
                 plus.textContent = '+';
-
                 const group2 = document.createElement('div');
                 group2.className = 'aid-group';
                 for (let i = 0; i < b; i++) {
@@ -1086,14 +939,9 @@
                     item.className = 'aid-item';
                     item.textContent = emoji;
                     item.style.animationDelay = `${(a + i) * 0.04}s`;
-                    item.onclick = () => {
-                        playCountPop();
-                        item.style.transform = 'scale(1.35)';
-                        setTimeout(() => (item.style.transform = ''), 180);
-                    };
+                    item.onclick = () => { playCountPop(); item.style.transform = 'scale(1.35)'; setTimeout(() => (item.style.transform = ''), 180); };
                     group2.appendChild(item);
                 }
-
                 dom.visualAid.appendChild(group1);
                 dom.visualAid.appendChild(plus);
                 dom.visualAid.appendChild(group2);
@@ -1103,29 +951,22 @@
                     group.className = 'aid-group';
                     const tens = Math.floor(num / 10);
                     const ones = num % 10;
-
                     for (let t = 0; t < tens; t++) {
                         const rod = document.createElement('div');
                         rod.className = 'ten-rod';
-                        rod.title = '10';
-                        for (let s = 0; s < 10; s++) {
-                            rod.appendChild(document.createElement('span'));
-                        }
+                        for (let s = 0; s < 10; s++) rod.appendChild(document.createElement('span'));
                         group.appendChild(rod);
                     }
                     for (let o = 0; o < ones; o++) {
                         const cube = document.createElement('div');
                         cube.className = 'one-cube';
-                        cube.title = '1';
                         group.appendChild(cube);
                     }
                     return group;
                 };
-
                 const plus = document.createElement('div');
                 plus.className = 'aid-plus';
                 plus.textContent = '+';
-
                 dom.visualAid.appendChild(buildBlocks(a));
                 dom.visualAid.appendChild(plus);
                 dom.visualAid.appendChild(buildBlocks(b));
@@ -1133,87 +974,46 @@
         }
 
         function nextQuestion() {
-            if (state.questionIndex >= state.totalQuestions) {
-                showCelebration();
-                return;
-            }
-
-            state.isSolved = false;
-            state.firstTry = true;
-
+            if (state.questionIndex >= state.totalQuestions) { showCelebration(); return; }
+            state.isSolved = false; state.firstTry = true;
             const { a, b, sum } = generateProblem();
-            state.num1 = a;
-            state.num2 = b;
-            state.answer = sum;
-
-            dom.num1.textContent = a;
-            dom.num2.textContent = b;
-            dom.answerSlot.textContent = '?';
-            dom.answerSlot.className = 'answer-slot';
-
+            state.num1 = a; state.num2 = b; state.answer = sum;
+            dom.num1.textContent = a; dom.num2.textContent = b;
+            dom.answerSlot.textContent = '?'; dom.answerSlot.className = 'answer-slot';
             renderVisualAid(a, b);
-
-            // Update progress bar
             const pct = (state.questionIndex / state.totalQuestions) * 100;
             dom.progressFill.style.width = `${pct}%`;
             dom.progressText.textContent = `${state.questionIndex + 1} / ${state.totalQuestions}`;
-
-            // Render 4 draggable number tiles
             const options = generateChoices(sum);
             dom.choicesGrid.innerHTML = '';
-
             options.forEach((val) => {
                 const slot = document.createElement('div');
                 slot.className = 'tile-slot';
-
                 const tile = document.createElement('div');
                 tile.className = 'choice-tile';
                 tile.textContent = val;
-                tile.dataset.value = val;
-
                 setupDragAndDrop(tile, val);
                 slot.appendChild(tile);
                 dom.choicesGrid.appendChild(slot);
             });
         }
 
-        /* =========================================
-           POINTER DRAG-AND-DROP (DRAG ONLY, NO CLICK)
-           ========================================= */
         function isOverlappingDropZone(tileRect) {
             const targetRect = dom.answerSlot.getBoundingClientRect();
             const pad = 18;
-            return !(
-                tileRect.right < targetRect.left - pad ||
-                tileRect.left > targetRect.right + pad ||
-                tileRect.bottom < targetRect.top - pad ||
-                tileRect.top > targetRect.bottom + pad
-            );
+            return !(tileRect.right < targetRect.left - pad || tileRect.left > targetRect.right + pad ||
+                     tileRect.bottom < targetRect.top - pad || tileRect.top > targetRect.bottom + pad);
         }
 
         function setupDragAndDrop(tile, value) {
-            let isDragging = false;
-            let hasMoved = false;
-            let startX = 0;
-            let startY = 0;
-            let offsetX = 0;
-            let offsetY = 0;
+            let isDragging = false, hasMoved = false, startX = 0, startY = 0, offsetX = 0, offsetY = 0;
 
             const onPointerDown = (e) => {
-                if (state.isSolved || tile.classList.contains('wrong') || tile.classList.contains('disabled')) {
-                    return;
-                }
-                e.preventDefault();
-                ensureAudio();
-
+                if (state.isSolved || tile.classList.contains('wrong') || tile.classList.contains('disabled')) return;
+                e.preventDefault(); ensureAudio();
                 const rect = tile.getBoundingClientRect();
-                isDragging = true;
-                hasMoved = false;
-                startX = e.clientX;
-                startY = e.clientY;
-                offsetX = e.clientX - rect.left;
-                offsetY = e.clientY - rect.top;
-
+                isDragging = true; hasMoved = false; startX = e.clientX; startY = e.clientY;
+                offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
                 tile.setPointerCapture(e.pointerId);
                 tile.addEventListener('pointermove', onPointerMove);
                 tile.addEventListener('pointerup', onPointerUp);
@@ -1222,67 +1022,40 @@
 
             const onPointerMove = (e) => {
                 if (!isDragging) return;
-
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-
-                // Require a deliberate drag movement (> 8px) so clicks never trigger dragging
+                const dx = e.clientX - startX, dy = e.clientY - startY;
                 if (!hasMoved && Math.hypot(dx, dy) > 8) {
                     hasMoved = true;
                     const rect = tile.getBoundingClientRect();
-                    tile.style.width = `${rect.width}px`;
-                    tile.style.height = `${rect.height}px`;
+                    tile.style.width = `${rect.width}px`; tile.style.height = `${rect.height}px`;
                     tile.classList.add('dragging');
                     playPickupSound();
                 }
-
                 if (hasMoved) {
                     if (document.body.classList.contains('force-landscape')) {
-                        const w = tile.offsetWidth;
-                        const h = tile.offsetHeight;
+                        const w = tile.offsetWidth, h = tile.offsetHeight;
                         tile.style.left = `${e.clientY - w / 2}px`;
                         tile.style.top = `${window.innerWidth - e.clientX - h / 2}px`;
                     } else {
                         tile.style.left = `${e.clientX - offsetX}px`;
                         tile.style.top = `${e.clientY - offsetY}px`;
                     }
-
-                    const tileRect = tile.getBoundingClientRect();
-                    if (isOverlappingDropZone(tileRect)) {
-                        dom.answerSlot.classList.add('drag-over');
-                    } else {
-                        dom.answerSlot.classList.remove('drag-over');
-                    }
+                    dom.answerSlot.classList.toggle('drag-over', isOverlappingDropZone(tile.getBoundingClientRect()));
                 }
             };
 
-            const onPointerUp = (e) => {
+            const onPointerUp = () => {
                 if (!isDragging) return;
                 isDragging = false;
-
                 tile.removeEventListener('pointermove', onPointerMove);
                 tile.removeEventListener('pointerup', onPointerUp);
                 tile.removeEventListener('pointercancel', onPointerUp);
-
-                const tileRect = tile.getBoundingClientRect();
-                const droppedInTarget = hasMoved && isOverlappingDropZone(tileRect);
+                const droppedInTarget = hasMoved && isOverlappingDropZone(tile.getBoundingClientRect());
                 dom.answerSlot.classList.remove('drag-over');
-
-                // Reset inline positioning so tile snaps cleanly back to its tray slot
                 tile.classList.remove('dragging');
-                tile.style.width = '';
-                tile.style.height = '';
-                tile.style.left = '';
-                tile.style.top = '';
-
-                // ONLY evaluate if the tile was actually dragged and dropped onto the '?' drop zone
-                if (hasMoved && droppedInTarget) {
-                    evaluateAnswer(value, tile);
-                } else {
-                    // Gently wobble the tile back in its tray
-                    tile.classList.remove('snap-wobble');
-                    void tile.offsetWidth;
-                    tile.classList.add('snap-wobble');
+                tile.style.width = ''; tile.style.height = ''; tile.style.left = ''; tile.style.top = '';
+                if (hasMoved && droppedInTarget) evaluateAnswer(value, tile);
+                else {
+                    tile.classList.remove('snap-wobble'); void tile.offsetWidth; tile.classList.add('snap-wobble');
                     setTimeout(() => tile.classList.remove('snap-wobble'), 420);
                 }
             };
@@ -1290,149 +1063,69 @@
             tile.addEventListener('pointerdown', onPointerDown);
         }
 
-        /* =========================================
-           ANSWER EVALUATION & PROGRESSION
-           ========================================= */
         function evaluateAnswer(selectedValue, tileEl) {
             if (state.isSolved) return;
-
             if (selectedValue === state.answer) {
-                state.isSolved = true;
-                playSuccessSound();
-
-                dom.answerSlot.textContent = selectedValue;
-                dom.answerSlot.classList.add('solved');
+                state.isSolved = true; playSuccessSound();
+                dom.answerSlot.textContent = selectedValue; dom.answerSlot.classList.add('solved');
                 tileEl.classList.add('correct');
-
-                // Disable remaining tiles
                 document.querySelectorAll('.choice-tile').forEach((t) => t.classList.add('disabled'));
-
-                // Award stars & streak
-                state.stars += 1;
-                state.streak += 1;
-                if (state.streak > state.bestStreak) {
-                    state.bestStreak = state.streak;
-                }
-                updateStatsUI();
-
-                launchConfetti(45);
-
+                state.stars += 1; state.streak += 1;
+                if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+                updateStatsUI(); launchConfetti(45);
                 state.questionIndex += 1;
-                const pct = (state.questionIndex / state.totalQuestions) * 100;
-                dom.progressFill.style.width = `${pct}%`;
-
-                setTimeout(() => {
-                    nextQuestion();
-                }, 1350);
+                dom.progressFill.style.width = `${(state.questionIndex / state.totalQuestions) * 100}%`;
+                setTimeout(() => nextQuestion(), 1350);
             } else {
-                state.firstTry = false;
-                state.streak = 0;
-                updateStatsUI();
-                playGentleTryAgain();
-
+                state.firstTry = false; state.streak = 0; updateStatsUI(); playGentleTryAgain();
                 tileEl.classList.add('wrong', 'disabled');
                 dom.answerSlot.classList.add('wrong-drop');
                 setTimeout(() => dom.answerSlot.classList.remove('wrong-drop'), 450);
-
-                // Highlight counting visual aids to help the student count
                 dom.visualAid.classList.add('highlight-hint');
             }
         }
 
-        function updateStatsUI() {
-            dom.starCount.textContent = state.stars;
-            dom.streakCount.textContent = state.streak;
-        }
+        function updateStatsUI() { dom.starCount.textContent = state.stars; dom.streakCount.textContent = state.streak; }
 
         function showCelebration() {
-            playVictoryFanfare();
-            launchConfetti(140);
-
-            dom.playArea.style.display = 'none';
-            dom.progressSection.style.display = 'none';
+            playVictoryFanfare(); launchConfetti(140);
+            dom.playArea.style.display = 'none'; dom.progressSection.style.display = 'none';
             dom.celebrationScreen.classList.add('active');
-
-            dom.finalStars.textContent = `${state.stars} ⭐`;
-            dom.finalStreak.textContent = `${state.bestStreak} 🔥`;
+            dom.finalStars.textContent = `${state.stars} ⭐`; dom.finalStreak.textContent = `${state.bestStreak} 🔥`;
         }
 
-        /* =========================================
-           KEYBOARD ACCESSIBILITY (Play Again Only)
-           ========================================= */
-        document.addEventListener('keydown', (e) => {
-            if (dom.celebrationScreen.classList.contains('active')) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    startNewRound();
-                }
-            }
-        });
-
-        /* =========================================
-           LIGHTWEIGHT CONFETTI PARTICLE SYSTEM
-           ========================================= */
         const confettiCanvas = document.getElementById('confetti-canvas');
         const ctx = confettiCanvas.getContext('2d');
-        let particles = [];
-        let animId = null;
+        let particles = [], animId = null;
 
-        function resizeConfetti() {
-            confettiCanvas.width = window.innerWidth;
-            confettiCanvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeConfetti);
-        resizeConfetti();
+        function resizeConfetti() { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeConfetti); resizeConfetti();
 
         function launchConfetti(count = 60) {
             const colors = ['#facc15', '#38bdf8', '#22c55e', '#f472b6', '#a855f7', '#fb923c'];
             for (let i = 0; i < count; i++) {
                 particles.push({
-                    x: confettiCanvas.width * (0.2 + Math.random() * 0.6),
-                    y: confettiCanvas.height * 0.35,
-                    vx: (Math.random() - 0.5) * 14,
-                    vy: -Math.random() * 12 - 4,
-                    size: Math.random() * 9 + 6,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    rotation: Math.random() * 360,
-                    vRot: (Math.random() - 0.5) * 12
+                    x: confettiCanvas.width * (0.2 + Math.random() * 0.6), y: confettiCanvas.height * 0.35,
+                    vx: (Math.random() - 0.5) * 14, vy: -Math.random() * 12 - 4,
+                    size: Math.random() * 9 + 6, color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360, vRot: (Math.random() - 0.5) * 12
                 });
             }
-            if (!animId) {
-                animateConfetti();
-            }
+            if (!animId) animateConfetti();
         }
 
         function animateConfetti() {
             ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
             particles.forEach((p) => {
-                p.x += p.vx;
-                p.y += p.vy;
-                p.vy += 0.35; // gravity
-                p.vx *= 0.99;
-                p.rotation += p.vRot;
-
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate((p.rotation * Math.PI) / 180);
-                ctx.fillStyle = p.color;
-                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
-                ctx.restore();
+                p.x += p.vx; p.y += p.vy; p.vy += 0.35; p.vx *= 0.99; p.rotation += p.vRot;
+                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.fillStyle = p.color; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65); ctx.restore();
             });
-
             particles = particles.filter((p) => p.y < confettiCanvas.height + 30);
-
-            if (particles.length > 0) {
-                animId = requestAnimationFrame(animateConfetti);
-            } else {
-                animId = null;
-            }
+            if (particles.length > 0) animId = requestAnimationFrame(animateConfetti); else animId = null;
         }
 
-        /* =========================================
-           INITIALIZE GAME ON LOAD
-           ========================================= */
-        window.addEventListener('DOMContentLoaded', () => {
-            startNewRound();
-        });
+        window.addEventListener('DOMContentLoaded', () => startNewRound());
     </script>
 </body>
 </html>

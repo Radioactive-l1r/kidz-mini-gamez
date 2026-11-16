@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Balance Beam Scale</title>
     <style>
         :root {
@@ -213,57 +213,132 @@
             gap: 6px;
         }
 
-        /* No-Scroll Compact Landscape Layout (Native & Forced Rotate) */
-        @media (orientation: landscape) and (max-height: 500px) {
-            body { padding: 4px; overflow: hidden; }
-            .game-container { padding: 8px 14px; gap: 6px; max-height: 98dvh; border-radius: 20px; }
-            .header-bar { padding-bottom: 4px; }
-            .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
-            .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
-            .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
-            .progress-track { height: 12px; }
-            #play-area { gap: 6px !important; }
-            .scale-arena { padding: 8px 12px; gap: 6px; border-radius: 18px; }
-            .arena-hint { padding: 3px 12px; font-size: 0.82rem; }
-            .seesaw-stage { height: 145px; padding-bottom: 4px; }
-            .monkey-pivot-wrap { width: 68px; height: 72px; bottom: 36px; }
-            .seesaw-beam { bottom: 38px; height: 12px; }
-            .pan-tray { width: 106px; height: 10px; }
-            .pan-weights-row { min-height: 48px; }
-            .weight-block { width: 42px; height: 44px; font-size: 1.15rem; margin-top: 6px; border-radius: 10px; }
-            .weight-block::before { top: -8px; width: 18px; height: 8px; }
-            .drop-weight-slot { width: 44px; height: 46px; font-size: 1.3rem; margin-top: 6px; border-radius: 12px; }
-            .fulcrum-base { width: 74px; height: 46px; }
-            .fulcrum-triangle { border-left-width: 28px; border-right-width: 28px; border-bottom-width: 38px; }
-            .fulcrum-foot { width: 84px; height: 9px; }
-            .weights-dock { grid-template-columns: repeat(4, 1fr); padding: 8px 8px 4px; gap: 8px; border-radius: 14px; }
-            .weight-slot { height: 54px; }
-            .draggable-weight { width: 48px; height: 48px; font-size: 1.35rem; margin-top: 6px; border-radius: 12px; }
+        /* No-Scroll Side-by-Side Single-Screen Landscape Layout (Native & Forced Rotate) */
+        @media (orientation: landscape) and (max-height: 600px) {
+            html, body { height: 100dvh; max-height: 100dvh; min-height: 0; padding: 4px 8px; overflow: hidden; }
+            .game-container {
+                height: 100%;
+                max-height: 100%;
+                max-width: 100%;
+                padding: 6px 12px;
+                gap: 5px;
+                border-radius: 18px;
+                border-width: 3px;
+                justify-content: space-between;
+            }
+            .header-bar { padding-bottom: 4px; gap: 6px; flex-wrap: nowrap; }
+            .mode-selector { padding: 3px; border-radius: 14px; }
+            .mode-btn { padding: 4px 10px; font-size: 0.82rem; border-radius: 11px; }
+            .stat-badge { padding: 3px 8px; font-size: 0.85rem; border-radius: 12px; }
+            .icon-btn { width: 32px; height: 32px; font-size: 0.95rem; }
+            .progress-wrapper { gap: 8px; }
+            .progress-track { height: 10px; }
+            .progress-text { font-size: 0.82rem; min-width: 48px; }
+            #play-area { flex: 1; min-height: 0; gap: 6px !important; }
+            .scale-arena {
+                flex: 1;
+                min-height: 0;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                grid-template-rows: auto 1fr;
+                align-items: center;
+                padding: 6px 10px;
+                gap: 4px 10px;
+                border-radius: 16px;
+                border-width: 3px;
+            }
+            .arena-hint { grid-column: 1 / -1; justify-self: center; padding: 2px 12px; font-size: 0.78rem; }
+            .seesaw-stage { height: 100%; min-height: 0; max-height: 195px; padding-bottom: 2px; }
+            .monkey-pivot-wrap { width: 64px; height: 68px; bottom: 34px; }
+            .seesaw-beam { bottom: 36px; width: 95%; height: 11px; }
+            .pan-left { left: 6px; }
+            .pan-right { right: 6px; }
+            .pan-tray { width: 102px; height: 9px; }
+            .pan-weights-row { min-height: 44px; gap: 4px; }
+            .weight-block { width: 40px; height: 42px; font-size: 1.1rem; margin-top: 6px; border-radius: 10px; }
+            .weight-block::before { top: -8px; width: 16px; height: 8px; border-width: 3px; }
+            .drop-weight-slot { width: 42px; height: 44px; font-size: 1.25rem; margin-top: 6px; border-radius: 11px; border-width: 3px; }
+            .fulcrum-base { width: 70px; height: 44px; }
+            .fulcrum-triangle { border-left-width: 26px; border-right-width: 26px; border-bottom-width: 36px; }
+            .fulcrum-foot { width: 80px; height: 8px; }
+            .weights-dock {
+                width: auto;
+                height: 100%;
+                max-height: 190px;
+                grid-template-columns: repeat(2, 1fr);
+                align-content: center;
+                border-top: none;
+                border-left: 2px solid rgba(245, 158, 11, 0.35);
+                padding: 8px 10px 4px;
+                gap: 8px 10px;
+                border-radius: 14px;
+            }
+            .weight-slot { height: 58px; width: 58px; }
+            .draggable-weight { width: 50px; height: 50px; font-size: 1.35rem; margin-top: 6px; border-radius: 12px; border-width: 3px; box-shadow: 0 4px 0 rgba(0,0,0,0.25); }
             .draggable-weight::before { top: -8px; width: 20px; height: 8px; border-width: 3px; }
+            .celebration-screen { padding: 8px; gap: 10px; justify-content: center; flex: 1; }
+            .trophy-icon { font-size: 3.5rem; }
+            .celebration-title { font-size: 1.5rem; }
+            .final-stat-box { padding: 8px 16px; min-width: 110px; }
+            .final-stat-val { font-size: 1.4rem; }
+            .play-again-btn { padding: 10px 26px; font-size: 1.15rem; }
         }
-        body.force-landscape .header-bar { padding-bottom: 4px; }
-        body.force-landscape .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
-        body.force-landscape .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
-        body.force-landscape .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
-        body.force-landscape .progress-track { height: 12px; }
-        body.force-landscape #play-area { gap: 6px !important; }
-        body.force-landscape .scale-arena { padding: 8px 12px; gap: 6px; border-radius: 18px; }
-        body.force-landscape .arena-hint { padding: 3px 12px; font-size: 0.82rem; }
-        body.force-landscape .seesaw-stage { height: 145px; padding-bottom: 4px; }
-        body.force-landscape .monkey-pivot-wrap { width: 68px; height: 72px; bottom: 36px; }
-        body.force-landscape .seesaw-beam { bottom: 38px; height: 12px; }
-        body.force-landscape .pan-tray { width: 106px; height: 10px; }
-        body.force-landscape .pan-weights-row { min-height: 48px; }
-        body.force-landscape .weight-block { width: 42px; height: 44px; font-size: 1.15rem; margin-top: 6px; border-radius: 10px; }
-        body.force-landscape .weight-block::before { top: -8px; width: 18px; height: 8px; }
-        body.force-landscape .drop-weight-slot { width: 44px; height: 46px; font-size: 1.3rem; margin-top: 6px; border-radius: 12px; }
-        body.force-landscape .fulcrum-base { width: 74px; height: 46px; }
-        body.force-landscape .fulcrum-triangle { border-left-width: 28px; border-right-width: 28px; border-bottom-width: 38px; }
-        body.force-landscape .fulcrum-foot { width: 84px; height: 9px; }
-        body.force-landscape .weights-dock { grid-template-columns: repeat(4, 1fr); padding: 8px 8px 4px; gap: 8px; border-radius: 14px; }
-        body.force-landscape .weight-slot { height: 54px; }
-        body.force-landscape .draggable-weight { width: 48px; height: 48px; font-size: 1.35rem; margin-top: 6px; border-radius: 12px; }
+        body.force-landscape .header-bar { padding-bottom: 4px; gap: 6px; flex-wrap: nowrap; }
+        body.force-landscape .mode-selector { padding: 3px; border-radius: 14px; }
+        body.force-landscape .mode-btn { padding: 4px 10px; font-size: 0.82rem; border-radius: 11px; }
+        body.force-landscape .stat-badge { padding: 3px 8px; font-size: 0.85rem; border-radius: 12px; }
+        body.force-landscape .icon-btn { width: 32px; height: 32px; font-size: 0.95rem; }
+        body.force-landscape .progress-wrapper { gap: 8px; }
+        body.force-landscape .progress-track { height: 10px; }
+        body.force-landscape .progress-text { font-size: 0.82rem; min-width: 48px; }
+        body.force-landscape #play-area { flex: 1; min-height: 0; gap: 6px !important; }
+        body.force-landscape .scale-arena {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-rows: auto 1fr;
+            align-items: center;
+            padding: 6px 10px;
+            gap: 4px 10px;
+            border-radius: 16px;
+            border-width: 3px;
+        }
+        body.force-landscape .arena-hint { grid-column: 1 / -1; justify-self: center; padding: 2px 12px; font-size: 0.78rem; }
+        body.force-landscape .seesaw-stage { height: 100%; min-height: 0; max-height: 195px; padding-bottom: 2px; }
+        body.force-landscape .monkey-pivot-wrap { width: 64px; height: 68px; bottom: 34px; }
+        body.force-landscape .seesaw-beam { bottom: 36px; width: 95%; height: 11px; }
+        body.force-landscape .pan-left { left: 6px; }
+        body.force-landscape .pan-right { right: 6px; }
+        body.force-landscape .pan-tray { width: 102px; height: 9px; }
+        body.force-landscape .pan-weights-row { min-height: 44px; gap: 4px; }
+        body.force-landscape .weight-block { width: 40px; height: 42px; font-size: 1.1rem; margin-top: 6px; border-radius: 10px; }
+        body.force-landscape .weight-block::before { top: -8px; width: 16px; height: 8px; border-width: 3px; }
+        body.force-landscape .drop-weight-slot { width: 42px; height: 44px; font-size: 1.25rem; margin-top: 6px; border-radius: 11px; border-width: 3px; }
+        body.force-landscape .fulcrum-base { width: 70px; height: 44px; }
+        body.force-landscape .fulcrum-triangle { border-left-width: 26px; border-right-width: 26px; border-bottom-width: 36px; }
+        body.force-landscape .fulcrum-foot { width: 80px; height: 8px; }
+        body.force-landscape .weights-dock {
+            width: auto;
+            height: 100%;
+            max-height: 190px;
+            grid-template-columns: repeat(2, 1fr);
+            align-content: center;
+            border-top: none;
+            border-left: 2px solid rgba(245, 158, 11, 0.35);
+            padding: 8px 10px 4px;
+            gap: 8px 10px;
+            border-radius: 14px;
+        }
+        body.force-landscape .weight-slot { height: 58px; width: 58px; }
+        body.force-landscape .draggable-weight { width: 50px; height: 50px; font-size: 1.35rem; margin-top: 6px; border-radius: 12px; border-width: 3px; box-shadow: 0 4px 0 rgba(0,0,0,0.25); }
         body.force-landscape .draggable-weight::before { top: -8px; width: 20px; height: 8px; border-width: 3px; }
+        body.force-landscape .celebration-screen { padding: 8px; gap: 10px; justify-content: center; flex: 1; }
+        body.force-landscape .trophy-icon { font-size: 3.5rem; }
+        body.force-landscape .celebration-title { font-size: 1.5rem; }
+        body.force-landscape .final-stat-box { padding: 8px 16px; min-width: 110px; }
+        body.force-landscape .final-stat-val { font-size: 1.4rem; }
+        body.force-landscape .play-again-btn { padding: 10px 26px; font-size: 1.15rem; }
 
         /* Progress Bar */
         .progress-wrapper {
