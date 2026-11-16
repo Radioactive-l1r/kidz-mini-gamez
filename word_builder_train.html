@@ -203,16 +203,65 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            width: 100vh;
-            max-width: 100vh;
-            height: 100vw;
-            max-height: 100vw;
+            width: 100dvh;
+            max-width: 100dvh;
+            height: 100dvw;
+            max-height: 100dvw;
             transform: translate(-50%, -50%) rotate(90deg);
             border-radius: 0;
-            overflow-y: auto;
-            padding: 12px 18px;
-            gap: 10px;
+            overflow: hidden;
+            justify-content: space-between;
+            padding: 8px 16px;
+            gap: 6px;
         }
+
+        /* No-Scroll Compact Landscape Layout (Native & Forced Rotate) */
+        @media (orientation: landscape) and (max-height: 500px) {
+            body { padding: 4px; overflow: hidden; }
+            .game-container { padding: 8px 14px; gap: 6px; max-height: 98dvh; border-radius: 20px; }
+            .header-bar { padding-bottom: 4px; }
+            .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
+            .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
+            .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
+            .progress-track { height: 12px; }
+            #play-area { gap: 6px !important; }
+            .station-arena { padding: 8px 12px 10px; gap: 8px; border-radius: 18px; }
+            .arena-hint { padding: 3px 12px; font-size: 0.82rem; }
+            .train-stage { min-height: 122px; padding-bottom: 6px; }
+            .locomotive { width: 106px; height: 102px; }
+            .smokestack { width: 18px; height: 20px; left: 18px; }
+            .engine-body { height: 76px; border-radius: 18px 14px 10px 10px; }
+            .picture-window { width: 66px; height: 60px; font-size: 2.4rem; border-radius: 12px; }
+            .coupler { width: 8px; height: 7px; margin-bottom: 16px; }
+            .letter-car { width: 62px; height: 74px; font-size: 2rem; border-radius: 14px; }
+            .wheel { width: 18px; height: 18px; }
+            .car-wheels { bottom: -11px; }
+            .railway-track { margin-top: 8px; height: 10px; }
+            .crates-dock { grid-template-columns: repeat(4, 1fr); padding: 8px; gap: 8px; border-radius: 14px; }
+            .crate-slot { height: 54px; }
+            .letter-crate { width: 56px; height: 52px; font-size: 1.65rem; border-radius: 14px; }
+        }
+        body.force-landscape .header-bar { padding-bottom: 4px; }
+        body.force-landscape .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
+        body.force-landscape .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
+        body.force-landscape .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
+        body.force-landscape .progress-track { height: 12px; }
+        body.force-landscape #play-area { gap: 6px !important; }
+        body.force-landscape .station-arena { padding: 8px 12px 10px; gap: 8px; border-radius: 18px; }
+        body.force-landscape .arena-hint { padding: 3px 12px; font-size: 0.82rem; }
+        body.force-landscape .train-stage { min-height: 122px; padding-bottom: 6px; }
+        body.force-landscape .locomotive { width: 106px; height: 102px; }
+        body.force-landscape .smokestack { width: 18px; height: 20px; left: 18px; }
+        body.force-landscape .engine-body { height: 76px; border-radius: 18px 14px 10px 10px; }
+        body.force-landscape .picture-window { width: 66px; height: 60px; font-size: 2.4rem; border-radius: 12px; }
+        body.force-landscape .coupler { width: 8px; height: 7px; margin-bottom: 16px; }
+        body.force-landscape .letter-car { width: 62px; height: 74px; font-size: 2rem; border-radius: 14px; }
+        body.force-landscape .wheel { width: 18px; height: 18px; }
+        body.force-landscape .car-wheels { bottom: -11px; }
+        body.force-landscape .railway-track { margin-top: 8px; height: 10px; }
+        body.force-landscape .crates-dock { grid-template-columns: repeat(4, 1fr); padding: 8px; gap: 8px; border-radius: 14px; }
+        body.force-landscape .crate-slot { height: 54px; }
+        body.force-landscape .letter-crate { width: 56px; height: 52px; font-size: 1.65rem; border-radius: 14px; }
 
         /* Progress Bar */
         .progress-wrapper {

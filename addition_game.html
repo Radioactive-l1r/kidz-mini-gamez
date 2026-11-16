@@ -216,16 +216,59 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            width: 100vh;
-            max-width: 100vh;
-            height: 100vw;
-            max-height: 100vw;
+            width: 100dvh;
+            max-width: 100dvh;
+            height: 100dvw;
+            max-height: 100dvw;
             transform: translate(-50%, -50%) rotate(90deg);
             border-radius: 0;
-            overflow-y: auto;
-            padding: 12px 18px;
-            gap: 10px;
+            overflow: hidden;
+            justify-content: space-between;
+            padding: 8px 16px;
+            gap: 6px;
         }
+
+        /* No-Scroll Compact Landscape Layout (Native & Forced Rotate) */
+        @media (orientation: landscape) and (max-height: 500px) {
+            body { padding: 4px; overflow: hidden; }
+            .game-container { padding: 8px 14px; gap: 6px; max-height: 98dvh; border-radius: 20px; }
+            .header-bar { padding-bottom: 4px; }
+            .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
+            .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
+            .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
+            .progress-track { height: 12px; }
+            .play-area { gap: 6px; padding: 0; }
+            .play-hint { padding: 3px 12px; font-size: 0.85rem; }
+            .equation-board { padding: 6px 12px; gap: 8px; border-radius: 18px; }
+            .num-box { min-width: 56px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
+            .answer-slot { min-width: 72px; min-height: 50px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
+            .operator { font-size: 1.65rem; }
+            .visual-aid-container { min-height: 44px; padding: 4px 8px; gap: 8px; border-radius: 14px; }
+            .aid-group { padding: 3px 6px; gap: 3px; }
+            .aid-item { font-size: 1.15rem; }
+            .choices-tray { padding: 6px 10px; border-radius: 18px; }
+            .choices-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+            .tile-slot { height: 52px; border-radius: 14px; }
+            .choice-tile { font-size: 1.55rem; border-radius: 14px; }
+        }
+        body.force-landscape .header-bar { padding-bottom: 4px; }
+        body.force-landscape .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
+        body.force-landscape .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
+        body.force-landscape .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
+        body.force-landscape .progress-track { height: 12px; }
+        body.force-landscape .play-area { gap: 6px; padding: 0; }
+        body.force-landscape .play-hint { padding: 3px 12px; font-size: 0.85rem; }
+        body.force-landscape .equation-board { padding: 6px 12px; gap: 8px; border-radius: 18px; }
+        body.force-landscape .num-box { min-width: 56px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
+        body.force-landscape .answer-slot { min-width: 72px; min-height: 50px; padding: 4px 10px; font-size: 1.75rem; border-radius: 14px; }
+        body.force-landscape .operator { font-size: 1.65rem; }
+        body.force-landscape .visual-aid-container { min-height: 44px; padding: 4px 8px; gap: 8px; border-radius: 14px; }
+        body.force-landscape .aid-group { padding: 3px 6px; gap: 3px; }
+        body.force-landscape .aid-item { font-size: 1.15rem; }
+        body.force-landscape .choices-tray { padding: 6px 10px; border-radius: 18px; }
+        body.force-landscape .choices-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        body.force-landscape .tile-slot { height: 52px; border-radius: 14px; }
+        body.force-landscape .choice-tile { font-size: 1.55rem; border-radius: 14px; }
 
         /* Progress Bar Section */
         .progress-wrapper {

@@ -180,16 +180,75 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            width: 100vh;
-            max-width: 100vh;
-            height: 100vw;
-            max-height: 100vw;
+            width: 100dvh;
+            max-width: 100dvh;
+            height: 100dvw;
+            max-height: 100dvw;
             transform: translate(-50%, -50%) rotate(90deg);
             border-radius: 0;
-            overflow-y: auto;
-            padding: 12px 18px;
-            gap: 10px;
+            overflow: hidden;
+            justify-content: space-between;
+            padding: 8px 16px;
+            gap: 6px;
         }
+
+        /* No-Scroll Side-by-Side Compact Landscape Layout (Native & Forced Rotate) */
+        @media (orientation: landscape) and (max-height: 500px) {
+            body { padding: 4px; overflow: hidden; }
+            .game-container { padding: 8px 14px; gap: 6px; max-height: 98dvh; border-radius: 20px; }
+            .header-bar { padding-bottom: 4px; }
+            .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
+            .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
+            .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
+            .progress-track { height: 12px; }
+            #play-area { gap: 6px !important; }
+            .launch-stage { padding: 8px 12px; gap: 6px; border-radius: 18px; }
+            .launch-hint { padding: 3px 12px; font-size: 0.82rem; }
+            .rocket-upper-row { min-height: 140px; gap: 18px; }
+            .rocket-drop-zone { width: 120px; height: 148px; }
+            .rocket-head { width: 70px; height: 50px; }
+            .rocket-head-number { font-size: 1.1rem; padding: 2px 8px; margin-bottom: 4px; }
+            .rocket-body { width: 70px; height: 82px; padding: 5px 7px; }
+            .rocket-fin-left, .rocket-fin-right { width: 22px; height: 42px; bottom: 20px; }
+            .rocket-thruster { width: 42px; height: 10px; }
+            .gauge-card { min-width: 76px; padding: 6px 10px; border-radius: 16px; }
+            .gauge-icon { font-size: 1.1rem; }
+            .gauge-number { font-size: 1.65rem; }
+            .clear-btn { width: 44px; height: 38px; font-size: 1.1rem; border-radius: 14px; }
+            .fuel-dock { grid-template-columns: repeat(4, 1fr); padding: 8px 8px 4px; gap: 8px; border-radius: 14px; }
+            .fuel-pod-slot { height: 54px; }
+            .fuel-pod { width: 52px; height: 50px; margin-top: 4px; border-width: 3px; }
+            .fuel-pod::before { top: -8px; left: 8px; width: 14px; height: 7px; }
+            .fuel-pod::after { top: 5px; right: 6px; width: 12px; height: 6px; }
+            .tank-ribs { inset: 14px 6px 6px 6px; }
+            .pod-value { font-size: 1.2rem; margin-top: 8px; }
+        }
+        body.force-landscape .header-bar { padding-bottom: 4px; }
+        body.force-landscape .mode-btn { padding: 5px 10px; font-size: 0.85rem; }
+        body.force-landscape .stat-badge { padding: 4px 9px; font-size: 0.88rem; }
+        body.force-landscape .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
+        body.force-landscape .progress-track { height: 12px; }
+        body.force-landscape #play-area { gap: 6px !important; }
+        body.force-landscape .launch-stage { padding: 8px 12px; gap: 6px; border-radius: 18px; }
+        body.force-landscape .launch-hint { padding: 3px 12px; font-size: 0.82rem; }
+        body.force-landscape .rocket-upper-row { min-height: 140px; gap: 18px; }
+        body.force-landscape .rocket-drop-zone { width: 120px; height: 148px; }
+        body.force-landscape .rocket-head { width: 70px; height: 50px; }
+        body.force-landscape .rocket-head-number { font-size: 1.1rem; padding: 2px 8px; margin-bottom: 4px; }
+        body.force-landscape .rocket-body { width: 70px; height: 82px; padding: 5px 7px; }
+        body.force-landscape .rocket-fin-left, body.force-landscape .rocket-fin-right { width: 22px; height: 42px; bottom: 20px; }
+        body.force-landscape .rocket-thruster { width: 42px; height: 10px; }
+        body.force-landscape .gauge-card { min-width: 76px; padding: 6px 10px; border-radius: 16px; }
+        body.force-landscape .gauge-icon { font-size: 1.1rem; }
+        body.force-landscape .gauge-number { font-size: 1.65rem; }
+        body.force-landscape .clear-btn { width: 44px; height: 38px; font-size: 1.1rem; border-radius: 14px; }
+        body.force-landscape .fuel-dock { grid-template-columns: repeat(4, 1fr); padding: 8px 8px 4px; gap: 8px; border-radius: 14px; }
+        body.force-landscape .fuel-pod-slot { height: 54px; }
+        body.force-landscape .fuel-pod { width: 52px; height: 50px; margin-top: 4px; border-width: 3px; }
+        body.force-landscape .fuel-pod::before { top: -8px; left: 8px; width: 14px; height: 7px; }
+        body.force-landscape .fuel-pod::after { top: 5px; right: 6px; width: 12px; height: 6px; }
+        body.force-landscape .tank-ribs { inset: 14px 6px 6px 6px; }
+        body.force-landscape .pod-value { font-size: 1.2rem; margin-top: 8px; }
 
         .progress-wrapper {
             display: flex;
