@@ -69,30 +69,87 @@
             gap: 20px;
         }
 
+        .hub-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
         .hub-title {
-            font-size: clamp(1.8rem, 5vw, 2.4rem);
+            font-size: clamp(1.5rem, 5vw, 2.3rem);
             font-weight: 900;
             color: #0369a1;
-            text-align: center;
+            text-align: left;
+        }
+
+        .rotate-btn {
+            background: #e0f2fe;
+            border: 3px solid #7dd3fc;
+            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            font-size: 1.35rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.2s ease, background 0.2s;
+        }
+
+        .rotate-btn:hover {
+            background: #bae6fd;
+            transform: rotate(90deg) scale(1.06);
+        }
+
+        /* Landscape Lock Fallback for Mobile Portrait */
+        body.force-landscape {
+            padding: 0;
+            overflow: hidden;
+        }
+        body.force-landscape .hub-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100vh;
+            max-width: 100vh;
+            height: 100vw;
+            max-height: 100vw;
+            transform: translate(-50%, -50%) rotate(90deg);
+            border-radius: 0;
+            overflow-y: auto;
+            padding: 16px 24px;
+            gap: 12px;
         }
 
         /* 5 Game Buttons List */
         .games-list {
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        @media (min-width: 640px) {
+            .games-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .games-list .game-btn:last-child {
+                grid-column: 1 / -1;
+            }
         }
 
         .game-btn {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 14px;
             width: 100%;
-            padding: 16px 24px;
-            border-radius: 26px;
+            padding: 14px 18px;
+            border-radius: 24px;
             text-decoration: none;
-            font-size: clamp(1.2rem, 3.8vw, 1.55rem);
+            font-size: clamp(1.05rem, 3.4vw, 1.35rem);
             font-weight: 900;
             color: #ffffff;
             transition: transform 0.15s ease, filter 0.15s ease;
@@ -152,7 +209,10 @@
     <div class="cloud cloud-2"></div>
 
     <main class="hub-container">
-        <h1 class="hub-title">🎮 Pick a Game!</h1>
+        <div class="hub-header">
+            <h1 class="hub-title">🎮 Pick a Game!</h1>
+            <button class="rotate-btn" id="rotate-btn" onclick="toggleLandscapeMode()" title="Rotate Screen" aria-label="Rotate Screen">🔄</button>
+        </div>
 
         <nav class="games-list" aria-label="Games Menu">
             <a href="addition_game.html" class="game-btn btn-addition">
@@ -182,5 +242,34 @@
         </nav>
     </main>
 
+    <script>
+        async function toggleLandscapeMode() {
+            const isForced = document.body.classList.contains('force-landscape');
+            if (!isForced) {
+                try {
+                    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                    if (screen.orientation && screen.orientation.lock) {
+                        await screen.orientation.lock('landscape');
+                        return;
+                    }
+                } catch (err) {
+                    // Fallback to CSS 90-degree landscape rotation on mobile browsers
+                }
+                document.body.classList.add('force-landscape');
+            } else {
+                document.body.classList.remove('force-landscape');
+                try {
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
+                    if (document.fullscreenElement && document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    }
+                } catch (err) {}
+            }
+        }
+    </script>
 </body>
 </html>

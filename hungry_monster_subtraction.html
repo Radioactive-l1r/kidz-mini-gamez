@@ -171,6 +171,43 @@
             transform: scale(1.06);
         }
 
+        /* Mobile Responsive & Rotate Landscape Mode */
+        @media (max-width: 540px) {
+            body { padding: 8px; }
+            .game-container { padding: 14px 12px; border-radius: 24px; gap: 12px; }
+            .mode-btn { padding: 7px 12px; font-size: 0.9rem; }
+            .stat-badge { padding: 5px 10px; font-size: 0.95rem; }
+            .icon-btn { width: 38px; height: 38px; font-size: 1.15rem; }
+            .equation-board { padding: 12px 10px; gap: 6px; }
+            .eq-card { padding: 8px 12px; min-width: 56px; border-radius: 16px; }
+            .eq-num { font-size: 1.95rem; }
+            .operator { font-size: 1.8rem; }
+            .monster-stage { width: 106px; height: 106px; }
+            .plates-tray { padding: 10px; }
+            .plates-grid { gap: 10px; }
+            .plate-slot { max-width: 132px; }
+            .cookie-plate { padding: 14px; }
+            .cookie-plate::before { inset: 10px; }
+            .cookie-emoji { font-size: 1.35rem; }
+            .cookie-emoji.compact { font-size: 1rem; }
+        }
+
+        body.force-landscape { padding: 0; overflow: hidden; }
+        body.force-landscape .game-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100vh;
+            max-width: 100vh;
+            height: 100vw;
+            max-height: 100vw;
+            transform: translate(-50%, -50%) rotate(90deg);
+            border-radius: 0;
+            overflow-y: auto;
+            padding: 12px 18px;
+            gap: 10px;
+        }
+
         /* Row 2: Progress Bar */
         .progress-wrapper {
             display: flex;
@@ -664,6 +701,9 @@
                     <span>🔥</span>
                     <span id="streak-count">0</span>
                 </div>
+                <button class="icon-btn" id="rotate-btn" onclick="toggleLandscapeMode()" title="Rotate Screen" aria-label="Rotate Screen">
+                    🔄
+                </button>
                 <button class="icon-btn" id="mute-btn" onclick="toggleMute()" title="Toggle Sound">
                     🔊
                 </button>
@@ -904,6 +944,28 @@
             }
         }
 
+        async function toggleLandscapeMode() {
+            const isForced = document.body.classList.contains('force-landscape');
+            if (!isForced) {
+                try {
+                    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                    if (screen.orientation && screen.orientation.lock) {
+                        await screen.orientation.lock('landscape');
+                        return;
+                    }
+                } catch (err) {}
+                document.body.classList.add('force-landscape');
+            } else {
+                document.body.classList.remove('force-landscape');
+                try {
+                    if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+                    if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
+                } catch (err) {}
+            }
+        }
+
         /* =========================================
            MONSTER EMOTE BADGE
            ========================================= */
@@ -1095,8 +1157,15 @@
                 }
 
                 if (hasMoved) {
-                    plateEl.style.left = `${e.clientX - offsetX}px`;
-                    plateEl.style.top = `${e.clientY - offsetY}px`;
+                    if (document.body.classList.contains('force-landscape')) {
+                        const w = plateEl.offsetWidth;
+                        const h = plateEl.offsetHeight;
+                        plateEl.style.left = `${e.clientY - w / 2}px`;
+                        plateEl.style.top = `${window.innerWidth - e.clientX - h / 2}px`;
+                    } else {
+                        plateEl.style.left = `${e.clientX - offsetX}px`;
+                        plateEl.style.top = `${e.clientY - offsetY}px`;
+                    }
 
                     if (isOverMonster(plateEl.getBoundingClientRect())) {
                         dom.monsterDropZone.classList.add('mouth-open');

@@ -154,6 +154,43 @@
             transform: scale(1.06);
         }
 
+        /* Mobile Responsive & Rotate Landscape Mode */
+        @media (max-width: 540px) {
+            body { padding: 8px; }
+            .game-container { padding: 14px 12px; border-radius: 24px; gap: 10px; }
+            .mode-btn { padding: 7px 12px; font-size: 0.9rem; }
+            .stat-badge { padding: 5px 10px; font-size: 0.95rem; }
+            .icon-btn { width: 38px; height: 38px; font-size: 1.15rem; }
+            .launch-stage { padding: 12px 10px; gap: 10px; }
+            .rocket-upper-row { min-height: 230px; gap: 16px; }
+            .rocket-drop-zone { width: 170px; height: 235px; }
+            .rocket-head { width: 96px; height: 74px; }
+            .rocket-head-number { font-size: 1.45rem; padding: 4px 12px; }
+            .rocket-body { width: 96px; height: 126px; padding: 8px 10px; }
+            .rocket-fin-left, .rocket-fin-right { width: 30px; height: 58px; bottom: 32px; }
+            .gauge-card { min-width: 92px; padding: 10px 14px; }
+            .clear-btn { width: 56px; height: 48px; font-size: 1.35rem; }
+            .fuel-pod-slot { height: 88px; }
+            .fuel-pod { width: 74px; height: 78px; }
+            .pod-value { font-size: 1.65rem; }
+        }
+
+        body.force-landscape { padding: 0; overflow: hidden; }
+        body.force-landscape .game-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100vh;
+            max-width: 100vh;
+            height: 100vw;
+            max-height: 100vw;
+            transform: translate(-50%, -50%) rotate(90deg);
+            border-radius: 0;
+            overflow-y: auto;
+            padding: 12px 18px;
+            gap: 10px;
+        }
+
         .progress-wrapper {
             display: flex;
             align-items: center;
@@ -798,6 +835,9 @@
                     <span>🔥</span>
                     <span id="streak-count">0</span>
                 </div>
+                <button class="icon-btn" id="rotate-btn" onclick="toggleLandscapeMode()" title="Rotate Screen" aria-label="Rotate Screen">
+                    🔄
+                </button>
                 <button class="icon-btn" id="mute-btn" onclick="toggleMute()" title="Sound">
                     🔊
                 </button>
@@ -1046,6 +1086,28 @@
             if (!state.isMuted) playPickupSound();
         }
 
+        async function toggleLandscapeMode() {
+            const isForced = document.body.classList.contains('force-landscape');
+            if (!isForced) {
+                try {
+                    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                    if (screen.orientation && screen.orientation.lock) {
+                        await screen.orientation.lock('landscape');
+                        return;
+                    }
+                } catch (err) {}
+                document.body.classList.add('force-landscape');
+            } else {
+                document.body.classList.remove('force-landscape');
+                try {
+                    if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+                    if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
+                } catch (err) {}
+            }
+        }
+
         /* =========================================
            GRADE & TARGET NUMBER GENERATION
            ========================================= */
@@ -1218,8 +1280,13 @@
 
             const updateClonePosition = (clientX, clientY) => {
                 if (!cloneEl) return;
-                cloneEl.style.left = `${clientX - cloneWidth / 2}px`;
-                cloneEl.style.top = `${clientY - cloneHeight / 2}px`;
+                if (document.body.classList.contains('force-landscape')) {
+                    cloneEl.style.left = `${clientY - cloneWidth / 2}px`;
+                    cloneEl.style.top = `${window.innerWidth - clientX - cloneHeight / 2}px`;
+                } else {
+                    cloneEl.style.left = `${clientX - cloneWidth / 2}px`;
+                    cloneEl.style.top = `${clientY - cloneHeight / 2}px`;
+                }
             };
 
             const onPointerDown = (e) => {
@@ -1243,7 +1310,6 @@
                 const dx = e.clientX - startX;
                 const dy = e.clientY - startY;
 
-                // Require deliberate drag (> 8px) so clicks never add fuel
                 if (!hasMoved && Math.hypot(dx, dy) > 8) {
                     hasMoved = true;
                     const rect = spawnerEl.getBoundingClientRect();
@@ -1251,7 +1317,6 @@
                     cloneHeight = rect.height;
 
                     cloneEl = spawnerEl.cloneNode(true);
-                    cloneEl.removeAttribute('id');
                     cloneEl.style.width = `${cloneWidth}px`;
                     cloneEl.style.height = `${cloneHeight}px`;
                     cloneEl.classList.add('dragging-clone');
@@ -1280,16 +1345,22 @@
 
                 dom.rocketDropZone.classList.remove('drag-over');
 
+                const droppedInRocket = hasMoved && cloneEl && isOverRocketTank(cloneEl.getBoundingClientRect());
+
                 if (cloneEl) {
-                    const droppedInTank = hasMoved && isOverRocketTank(cloneEl.getBoundingClientRect());
                     cloneEl.remove();
                     cloneEl = null;
+                }
 
-                    if (droppedInTank && !state.isLaunching) {
-                        state.currentFuel += unitValue;
-                        playLoadFuelSound(unitValue);
-                        renderTank();
-                    }
+                if (droppedInRocket && !state.isLaunching) {
+                    state.currentFuel += unitValue;
+                    playLoadFuelSound(unitValue);
+                    renderTank();
+                } else {
+                    spawnerEl.classList.remove('snap-wobble');
+                    void spawnerEl.offsetWidth;
+                    spawnerEl.classList.add('snap-wobble');
+                    setTimeout(() => spawnerEl.classList.remove('snap-wobble'), 420);
                 }
             };
 
@@ -1333,9 +1404,9 @@
             for (let i = 0; i < count; i++) {
                 particles.push({
                     x: confettiCanvas.width * (0.2 + Math.random() * 0.6),
-                    y: confettiCanvas.height * 0.4,
+                    y: confettiCanvas.height * 0.35,
                     vx: (Math.random() - 0.5) * 14,
-                    vy: -Math.random() * 13 - 4,
+                    vy: -Math.random() * 12 - 4,
                     size: Math.random() * 9 + 6,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     rotation: Math.random() * 360,

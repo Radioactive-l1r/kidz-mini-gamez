@@ -173,6 +173,45 @@
             transform: scale(1.06);
         }
 
+        /* Mobile Responsive & Rotate Landscape Mode */
+        @media (max-width: 540px) {
+            body { padding: 8px; }
+            .game-container { padding: 14px 12px; border-radius: 24px; gap: 10px; }
+            .mode-btn { padding: 7px 12px; font-size: 0.9rem; }
+            .stat-badge { padding: 5px 10px; font-size: 0.95rem; }
+            .icon-btn { width: 38px; height: 38px; font-size: 1.15rem; }
+            .scale-arena { padding: 12px 10px; gap: 10px; }
+            .seesaw-stage { height: 220px; }
+            .monkey-pivot-wrap { width: 88px; height: 94px; bottom: 52px; }
+            .seesaw-beam { bottom: 56px; width: 96%; height: 14px; }
+            .pan-left { left: 6px; }
+            .pan-right { right: 6px; }
+            .pan-tray { width: 112px; height: 11px; }
+            .weight-block { width: 48px; height: 52px; font-size: 1.3rem; }
+            .drop-weight-slot { width: 50px; height: 54px; font-size: 1.45rem; }
+            .fulcrum-base { width: 90px; height: 64px; }
+            .fulcrum-triangle { border-left-width: 36px; border-right-width: 36px; border-bottom-width: 52px; }
+            .fulcrum-foot { width: 100px; height: 12px; }
+            .weight-slot { height: 78px; }
+            .draggable-weight { width: 66px; height: 66px; font-size: 1.7rem; }
+        }
+
+        body.force-landscape { padding: 0; overflow: hidden; }
+        body.force-landscape .game-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100vh;
+            max-width: 100vh;
+            height: 100vw;
+            max-height: 100vw;
+            transform: translate(-50%, -50%) rotate(90deg);
+            border-radius: 0;
+            overflow-y: auto;
+            padding: 12px 18px;
+            gap: 10px;
+        }
+
         /* Progress Bar */
         .progress-wrapper {
             display: flex;
@@ -720,6 +759,9 @@
                     <span>🔥</span>
                     <span id="streak-count">0</span>
                 </div>
+                <button class="icon-btn" id="rotate-btn" onclick="toggleLandscapeMode()" title="Rotate Screen" aria-label="Rotate Screen">
+                    🔄
+                </button>
                 <button class="icon-btn" id="mute-btn" onclick="toggleMute()" title="Sound">
                     🔊
                 </button>
@@ -940,6 +982,28 @@
             if (!state.isMuted) playPickupSound();
         }
 
+        async function toggleLandscapeMode() {
+            const isForced = document.body.classList.contains('force-landscape');
+            if (!isForced) {
+                try {
+                    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                    if (screen.orientation && screen.orientation.lock) {
+                        await screen.orientation.lock('landscape');
+                        return;
+                    }
+                } catch (err) {}
+                document.body.classList.add('force-landscape');
+            } else {
+                document.body.classList.remove('force-landscape');
+                try {
+                    if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+                    if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
+                } catch (err) {}
+            }
+        }
+
         /* =========================================
            GRADE & BALANCE EQUATION GENERATION
            ========================================= */
@@ -1145,8 +1209,15 @@
                 }
 
                 if (hasMoved) {
-                    weightEl.style.left = `${e.clientX - offsetX}px`;
-                    weightEl.style.top = `${e.clientY - offsetY}px`;
+                    if (document.body.classList.contains('force-landscape')) {
+                        const w = weightEl.offsetWidth;
+                        const h = weightEl.offsetHeight;
+                        weightEl.style.left = `${e.clientY - w / 2}px`;
+                        weightEl.style.top = `${window.innerWidth - e.clientX - h / 2}px`;
+                    } else {
+                        weightEl.style.left = `${e.clientX - offsetX}px`;
+                        weightEl.style.top = `${e.clientY - offsetY}px`;
+                    }
 
                     const dropSlot = document.getElementById('drop-weight-slot');
                     if (dropSlot) {
