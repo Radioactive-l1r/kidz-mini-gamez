@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hungry Monster Subtraction</title>
+    <style>
+        /* CSS Variables for a vibrant monster theme */
+        :root {
+            --monster-purple: #8b5cf6;
+            --monster-purple-dark: #6d28d9;
+            --monster-pink: #ec4899;
+            --monster-pink-dark: #be185d;
+            --card-bg: #ffffff;
+            --success-green: #22c55e;
+            --success-green-dark: #15803d;
+            --error-red: #f87171;
+            --error-red-dark: #dc2626;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --shadow-soft: 0 16px 34px -6px rgba(109, 40, 217, 0.2), 0 8px 14px -6px rgba(0, 0, 0, 0.08);
+            --shadow-btn: 0 7px 0px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(180deg, #e9d5ff 0%, #fae8ff 52%, #bbf7d0 52%, #86efac 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            padding: 16px;
+        }
+
+        /* Decorative Floating Clouds */
+        .cloud {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.88);
+            border-radius: 50px;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatCloud linear infinite;
+        }
+        .cloud::after, .cloud::before {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+        }
+        .cloud-1 { width: 130px; height: 42px; top: 5%; left: -160px; animation-duration: 38s; }
+        .cloud-1::before { width: 54px; height: 54px; top: -26px; left: 16px; }
+        .cloud-1::after { width: 74px; height: 74px; top: -36px; right: 16px; }
+
+        .cloud-2 { width: 165px; height: 50px; top: 15%; left: -210px; animation-duration: 52s; animation-delay: 8s; }
+        .cloud-2::before { width: 66px; height: 66px; top: -30px; left: 26px; }
+        .cloud-2::after { width: 84px; height: 84px; top: -40px; right: 22px; }
+
+        @keyframes floatCloud {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(100vw + 260px)); }
+        }
+
+        /* =========================================
+           MAIN CENTERED GAME CARD (4 ROWS)
+           ========================================= */
+        .game-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 860px;
+            background: var(--card-bg);
+            border-radius: 34px;
+            box-shadow: var(--shadow-soft);
+            border: 6px solid #ffffff;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Row 1: Top Header Bar */
+        .header-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 10px;
+            border-bottom: 3px dashed #e2e8f0;
+        }
+
+        .mode-selector {
+            display: flex;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 20px;
+            gap: 6px;
+        }
+
+        .mode-btn {
+            border: none;
+            padding: 9px 16px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 800;
+            font-family: inherit;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: var(--monster-purple);
+            color: white;
+            box-shadow: 0 4px 0 var(--monster-purple-dark);
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fef9c3;
+            border: 2px solid #fde047;
+            padding: 7px 14px;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #854d0e;
+        }
+
+        .streak-badge {
+            background: #fce7f3;
+            border-color: #f9a8d4;
+            color: #9d174d;
+        }
+
+        .icon-btn {
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #e2e8f0;
+            transform: scale(1.06);
+        }
+
+        /* Row 2: Progress Bar */
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 18px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #a855f7, #ec4899, #22c55e);
+            border-radius: 999px;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .progress-text {
+            font-weight: 800;
+            font-size: 0.98rem;
+            color: var(--text-muted);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* One-line Instruction Pill */
+        .play-hint {
+            align-self: center;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--monster-purple-dark);
+            background: #faf5ff;
+            border: 2px solid #d8b4fe;
+            padding: 6px 18px;
+            border-radius: 999px;
+            text-align: center;
+        }
+
+        /* Row 3: Subtraction Equation Board: Number - [Monster Mouth] = Answer */
+        .equation-board {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(10px, 2.5vw, 20px);
+            background: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 100%);
+            border: 4px solid #d8b4fe;
+            border-radius: 30px;
+            padding: 18px 20px;
+            width: 100%;
+            flex-wrap: nowrap;
+        }
+
+        .eq-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border: 4px solid #c084fc;
+            box-shadow: 0 6px 0 #c084fc;
+            border-radius: 22px;
+            padding: 12px 22px;
+            min-width: 82px;
+        }
+
+        .eq-card.result {
+            border-color: #38bdf8;
+            box-shadow: 0 6px 0 #0284c7;
+            background: #f0f9ff;
+        }
+
+        .eq-num {
+            font-size: clamp(2.3rem, 6vw, 3.6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            color: var(--monster-purple-dark);
+        }
+
+        .eq-card.result .eq-num {
+            color: #0369a1;
+        }
+
+        .operator {
+            font-size: clamp(2.2rem, 5.5vw, 3.3rem);
+            font-weight: 900;
+            color: #7e22ce;
+        }
+
+        /* =========================================
+           INLINE MONSTER MOUTH DROP TARGET (MIDDLE OF EQUATION)
+           ========================================= */
+        .monster-equation-slot {
+            background: radial-gradient(circle at center, #ffffff 0%, #fef3c7 100%);
+            border: 4px dashed #f59e0b;
+            border-radius: 28px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+        }
+
+        .monster-equation-slot.mouth-open {
+            border-style: solid;
+            border-color: #ea580c;
+            background: radial-gradient(circle at center, #fefce8 0%, #fde047 100%);
+            box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.28);
+            transform: scale(1.06);
+        }
+
+        .monster-equation-slot.wrong-shake {
+            border-style: solid;
+            border-color: var(--error-red-dark);
+            background: #fee2e2;
+            animation: shakeHorizontal 0.45s ease;
+        }
+
+        .monster-equation-slot.happy-glow {
+            border-style: solid;
+            border-color: var(--success-green);
+            background: #dcfce7;
+        }
+
+        /* Monster Stage inside Equation */
+        .monster-stage {
+            position: relative;
+            width: clamp(130px, 24vw, 175px);
+            height: clamp(130px, 24vw, 175px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: monsterIdleWiggle 3s ease-in-out infinite;
+        }
+
+        .monster-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            filter: drop-shadow(0 8px 10px rgba(109, 40, 217, 0.22));
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .monster-equation-slot.mouth-open .monster-svg {
+            transform: scale(1.1);
+        }
+        .monster-equation-slot.mouth-open .monster-mouth-open {
+            opacity: 1 !important;
+            transform: scale(1.12);
+            transform-origin: 110px 145px;
+        }
+        .monster-equation-slot.mouth-open .monster-mouth-idle {
+            opacity: 0 !important;
+        }
+
+        .monster-stage.burp-happy {
+            animation: monsterBurpBounce 0.7s ease;
+        }
+
+        @keyframes monsterIdleWiggle {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-6px) rotate(2deg); }
+        }
+
+        @keyframes monsterBurpBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            35% { transform: translateY(-16px) scale(1.12); }
+            70% { transform: translateY(-4px) scale(1.04); }
+        }
+
+        /* Eaten Number Badge on Monster's Tummy when Solved */
+        .monster-eaten-badge {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.5);
+            background: #22c55e;
+            color: #ffffff;
+            border: 3px solid #ffffff;
+            border-radius: 999px;
+            padding: 2px 14px;
+            font-size: 1.45rem;
+            font-weight: 900;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 20;
+        }
+
+        .monster-eaten-badge.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* Floating Emote Badge */
+        .monster-emote {
+            position: absolute;
+            top: 2px;
+            right: -10px;
+            background: #facc15;
+            color: #78350f;
+            border: 3px solid #ffffff;
+            border-radius: 999px;
+            padding: 4px 12px;
+            font-size: 0.92rem;
+            font-weight: 900;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: scale(0.5) rotate(8deg);
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 20;
+        }
+
+        .monster-emote.show {
+            opacity: 1;
+            transform: scale(1.1) rotate(8deg);
+        }
+
+        /* =========================================
+           ROW 4: 4 BIG DRAGGABLE COOKIE PLATES
+           ========================================= */
+        .plates-tray {
+            background: #fffbeb;
+            border: 3px dashed #fbbf24;
+            border-radius: 28px;
+            padding: 16px;
+            width: 100%;
+        }
+
+        .plates-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            width: 100%;
+        }
+
+        @media (min-width: 720px) {
+            .plates-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .plate-slot {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 192px;
+            margin: 0 auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Clean Ceramic Dinner Plate without button-like borders */
+        .cookie-plate {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f8fafc 72%, #e2e8f0 100%);
+            border: none;
+            box-shadow:
+                inset 0 4px 10px rgba(255, 255, 255, 0.98),
+                inset 0 -8px 14px rgba(148, 163, 184, 0.35),
+                0 10px 20px rgba(15, 23, 42, 0.14),
+                0 2px 6px rgba(15, 23, 42, 0.08);
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            touch-action: none;
+            animation: plateIdleFloat 2.8s ease-in-out infinite;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        /* Inner Ceramic Plate Well Ring */
+        .cookie-plate::before {
+            content: '';
+            position: absolute;
+            inset: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(148, 163, 184, 0.32);
+            box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.06);
+            pointer-events: none;
+        }
+
+        .plate-slot:nth-child(1) .cookie-plate { animation-delay: 0s; }
+        .plate-slot:nth-child(2) .cookie-plate { animation-delay: 0.45s; }
+        .plate-slot:nth-child(3) .cookie-plate { animation-delay: 0.9s; }
+        .plate-slot:nth-child(4) .cookie-plate { animation-delay: 1.35s; }
+
+        @keyframes plateIdleFloat {
+            0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+            50% { transform: translateY(-6px) rotate(1.5deg); }
+        }
+
+        .cookie-plate:hover:not(.dragging):not(.wrong):not(.disabled) {
+            transform: translateY(-8px) scale(1.05);
+            animation-play-state: paused;
+        }
+
+        .cookie-plate.dragging {
+            position: fixed;
+            z-index: 9999;
+            cursor: grabbing;
+            animation: none !important;
+            transform: scale(1.1) rotate(-4deg);
+            box-shadow:
+                inset 0 4px 10px rgba(255, 255, 255, 0.98),
+                inset 0 -8px 14px rgba(148, 163, 184, 0.35),
+                0 22px 34px rgba(15, 23, 42, 0.24);
+            pointer-events: none;
+        }
+
+        .cookie-plate.wrong {
+            background: radial-gradient(circle at center, #fee2e2 0%, #fecaca 100%);
+            box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15);
+            opacity: 0.45;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        .cookie-plate.correct {
+            background: radial-gradient(circle at center, #dcfce7 0%, #bbf7d0 100%);
+            box-shadow: 0 10px 20px rgba(22, 163, 74, 0.22);
+            animation: none;
+        }
+
+        .cookie-plate.disabled {
+            pointer-events: none;
+        }
+
+        .cookie-plate.snap-wobble {
+            animation: shakeHorizontal 0.4s ease !important;
+        }
+
+        /* Cookies Cluster centered inside the Inner Plate Well */
+        .cookies-cluster {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            width: 82%;
+            line-height: 1;
+        }
+
+        .cookie-emoji {
+            font-size: 1.7rem;
+            display: inline-block;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.14));
+        }
+
+        .cookie-emoji.compact {
+            font-size: 1.25rem;
+        }
+
+        @keyframes shakeHorizontal {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* Celebration Trophy Screen */
+        .celebration-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            padding: 24px 12px;
+        }
+
+        .celebration-screen.active {
+            display: flex;
+        }
+
+        .trophy-icon {
+            font-size: 6rem;
+            filter: drop-shadow(0 10px 15px rgba(234, 179, 8, 0.4));
+            animation: trophyFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes trophyFloat {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        .celebration-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--monster-purple-dark);
+        }
+
+        .celebration-stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .final-stat-box {
+            background: #faf5ff;
+            border: 3px solid #e9d5ff;
+            border-radius: 20px;
+            padding: 16px 24px;
+            min-width: 140px;
+        }
+
+        .final-stat-val {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--monster-pink-dark);
+        }
+
+        .final-stat-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .play-again-btn {
+            background: var(--monster-purple);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 18px 40px;
+            font-size: 1.45rem;
+            font-weight: 900;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: var(--shadow-btn) var(--monster-purple-dark);
+            transition: all 0.15s ease;
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-3px);
+            background: #7c3aed;
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Decorative Clouds -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+
+    <!-- Confetti Overlay -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- MAIN CENTERED GAME CARD -->
+    <main class="game-container">
+
+        <!-- Row 1: Header Bar -->
+        <header class="header-bar">
+            <div class="mode-selector" role="group" aria-label="Grade Level">
+                <button class="mode-btn active" id="btn-grade1" onclick="setGrade(1)">🌟 Grade 1</button>
+                <button class="mode-btn" id="btn-grade2" onclick="setGrade(2)">🚀 Grade 2</button>
+            </div>
+
+            <div class="controls-group">
+                <div class="stat-badge" title="Stars Earned">
+                    <span>⭐</span>
+                    <span id="star-count">0</span>
+                </div>
+                <div class="stat-badge streak-badge" title="Current Streak">
+                    <span>🔥</span>
+                    <span id="streak-count">0</span>
+                </div>
+                <button class="icon-btn" id="mute-btn" onclick="toggleMute()" title="Toggle Sound">
+                    🔊
+                </button>
+            </div>
+        </header>
+
+        <!-- Row 2: Round Progress Bar -->
+        <div class="progress-wrapper" id="progress-section">
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text">1 / 10</div>
+        </div>
+
+        <!-- Active Gameplay Section (Rows 3 & 4) -->
+        <section id="play-area" style="display: flex; flex-direction: column; gap: 18px;">
+
+            <div class="play-hint">Drag the right plate of food into the monster's mouth! 🍪👾</div>
+
+            <!-- Row 3: Equation with Monster Mouth in the Middle: Number - [Monster] = Answer -->
+            <div class="equation-board" aria-live="polite">
+                <div class="eq-card">
+                    <span class="eq-num" id="num1">8</span>
+                </div>
+
+                <div class="operator">−</div>
+
+                <!-- MONSTER MOUTH DROP TARGET -->
+                <div class="monster-equation-slot" id="monster-drop-zone" aria-label="Munchy the Hungry Monster">
+                    <div class="monster-stage" id="monster-stage">
+                        <div class="monster-emote" id="monster-emote">YUM! 😋</div>
+                        <div class="monster-eaten-badge" id="monster-eaten-badge">3</div>
+
+                        <!-- Cute Custom Inline SVG Hungry Monster -->
+                        <svg class="monster-svg" viewBox="0 0 220 230" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Horns -->
+                            <polygon points="52,65 36,20 82,48" fill="#facc15" stroke="#ca8a04" stroke-width="5" stroke-linejoin="round"/>
+                            <polygon points="168,65 184,20 138,48" fill="#facc15" stroke="#ca8a04" stroke-width="5" stroke-linejoin="round"/>
+
+                            <!-- Little Arms -->
+                            <path d="M 35 130 Q 8 115 18 92" fill="none" stroke="#7c3aed" stroke-width="14" stroke-linecap="round"/>
+                            <path d="M 185 130 Q 212 115 202 92" fill="none" stroke="#7c3aed" stroke-width="14" stroke-linecap="round"/>
+
+                            <!-- Fluffy Monster Body -->
+                            <rect x="32" y="38" width="156" height="172" rx="74" fill="#8b5cf6" stroke="#6d28d9" stroke-width="6"/>
+
+                            <!-- Belly Patch -->
+                            <ellipse cx="110" cy="176" rx="46" ry="26" fill="#c4b5fd" opacity="0.65"/>
+
+                            <!-- Three Googly Eyes -->
+                            <circle cx="72" cy="84" r="19" fill="#ffffff" stroke="#4c1d95" stroke-width="4"/>
+                            <circle cx="75" cy="84" r="8" fill="#1e293b"/>
+                            <circle cx="78" cy="80" r="3" fill="#ffffff"/>
+
+                            <circle cx="110" cy="70" r="22" fill="#ffffff" stroke="#4c1d95" stroke-width="4"/>
+                            <circle cx="110" cy="72" r="9" fill="#1e293b"/>
+                            <circle cx="113" cy="68" r="3.5" fill="#ffffff"/>
+
+                            <circle cx="148" cy="84" r="19" fill="#ffffff" stroke="#4c1d95" stroke-width="4"/>
+                            <circle cx="145" cy="84" r="8" fill="#1e293b"/>
+                            <circle cx="148" cy="80" r="3" fill="#ffffff"/>
+
+                            <!-- Rosy Cheeks -->
+                            <circle cx="54" cy="114" r="10" fill="#f472b6" opacity="0.75"/>
+                            <circle cx="166" cy="114" r="10" fill="#f472b6" opacity="0.75"/>
+
+                            <!-- IDLE SMILE MOUTH -->
+                            <g class="monster-mouth-idle" style="transition: opacity 0.15s;">
+                                <path d="M 66 126 Q 110 162 154 126" fill="#4c1d95" stroke="#4c1d95" stroke-width="6" stroke-linecap="round"/>
+                                <polygon points="78,128 85,142 92,128" fill="#ffffff"/>
+                                <polygon points="128,128 135,142 142,128" fill="#ffffff"/>
+                            </g>
+
+                            <!-- WIDE OPEN HUNGRY MOUTH -->
+                            <g class="monster-mouth-open" style="opacity: 0; transition: opacity 0.15s, transform 0.2s;">
+                                <ellipse cx="110" cy="142" rx="48" ry="34" fill="#4c1d95" stroke="#3b0764" stroke-width="5"/>
+                                <ellipse cx="110" cy="162" rx="26" ry="13" fill="#ec4899"/>
+                                <polygon points="82,111 90,124 98,111" fill="#ffffff"/>
+                                <polygon points="122,111 130,124 138,111" fill="#ffffff"/>
+                                <polygon points="94,173 101,161 108,173" fill="#ffffff"/>
+                                <polygon points="112,173 119,161 126,173" fill="#ffffff"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="operator">=</div>
+
+                <div class="eq-card result">
+                    <span class="eq-num" id="result-num">5</span>
+                </div>
+            </div>
+
+            <!-- Row 4: 4 BIG DRAGGABLE COOKIE PLATES -->
+            <div class="plates-tray">
+                <div class="plates-grid" id="plates-grid">
+                    <!-- 4 draggable plates with cookies rendered dynamically -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- End-of-Round Celebration Trophy Screen -->
+        <section class="celebration-screen" id="celebration-screen">
+            <div class="trophy-icon">🏆</div>
+            <h1 class="celebration-title">Awesome Job!</h1>
+
+            <div class="celebration-stats">
+                <div class="final-stat-box">
+                    <div class="final-stat-val" id="final-stars">10 ⭐</div>
+                    <div class="final-stat-label">Stars</div>
+                </div>
+                <div class="final-stat-box">
+                    <div class="final-stat-val" id="final-streak">5 🔥</div>
+                    <div class="final-stat-label">Streak</div>
+                </div>
+            </div>
+
+            <button class="play-again-btn" onclick="startNewRound()">
+                Play Again! 🍪
+            </button>
+        </section>
+
+    </main>
+
+    <script>
+        /* =========================================
+           GAME STATE & CONFIGURATION
+           ========================================= */
+        const state = {
+            grade: 1,
+            stars: 0,
+            streak: 0,
+            bestStreak: 0,
+            questionIndex: 0,
+            totalQuestions: 10,
+            startNum: 8,
+            eatenTarget: 3,
+            leftNum: 5,
+            treatEmoji: '🍪',
+            isSolved: false,
+            isMuted: false
+        };
+
+        const treatEmojis = ['🍪', '🍩', '🍓', '🧁', '🍎', '🍕', '🍉', '🥨', '🍌', '🍔'];
+
+        const dom = {
+            btnGrade1: document.getElementById('btn-grade1'),
+            btnGrade2: document.getElementById('btn-grade2'),
+            starCount: document.getElementById('star-count'),
+            streakCount: document.getElementById('streak-count'),
+            muteBtn: document.getElementById('mute-btn'),
+            progressSection: document.getElementById('progress-section'),
+            progressFill: document.getElementById('progress-fill'),
+            progressText: document.getElementById('progress-text'),
+            playArea: document.getElementById('play-area'),
+            num1: document.getElementById('num1'),
+            resultNum: document.getElementById('result-num'),
+            monsterEatenBadge: document.getElementById('monster-eaten-badge'),
+            platesGrid: document.getElementById('plates-grid'),
+            monsterDropZone: document.getElementById('monster-drop-zone'),
+            monsterStage: document.getElementById('monster-stage'),
+            monsterEmote: document.getElementById('monster-emote'),
+            celebrationScreen: document.getElementById('celebration-screen'),
+            finalStars: document.getElementById('final-stars'),
+            finalStreak: document.getElementById('final-streak')
+        };
+
+        /* =========================================
+           WEB AUDIO SYNTHESIZER (NO EXTERNAL FILES)
+           ========================================= */
+        let audioCtx = null;
+
+        function ensureAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.15, delay = 0, volume = 0.2) {
+            if (state.isMuted) return;
+            ensureAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime + delay;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.exponentialRampToValueAtTime(volume, now + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + duration + 0.02);
+        }
+
+        function playPickupSound() {
+            playTone(440, 'sine', 0.09, 0, 0.15);
+            playTone(587.33, 'sine', 0.1, 0.04, 0.15);
+        }
+
+        function playChompAndBurp() {
+            playTone(220, 'square', 0.08, 0, 0.15);
+            playTone(180, 'square', 0.08, 0.09, 0.15);
+            playTone(523.25, 'triangle', 0.16, 0.2, 0.24);
+            playTone(659.25, 'triangle', 0.16, 0.29, 0.24);
+            playTone(783.99, 'triangle', 0.28, 0.38, 0.26);
+        }
+
+        function playGentleOops() {
+            playTone(260, 'sawtooth', 0.15, 0, 0.14);
+            playTone(195, 'sawtooth', 0.22, 0.12, 0.14);
+        }
+
+        function playVictoryFanfare() {
+            const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+            const times = [0, 0.12, 0.24, 0.36, 0.54, 0.68];
+            notes.forEach((n, i) => playTone(n, 'triangle', 0.25, times[i], 0.25));
+        }
+
+        function toggleMute() {
+            state.isMuted = !state.isMuted;
+            dom.muteBtn.textContent = state.isMuted ? '🔇' : '🔊';
+            if (!state.isMuted) {
+                playPickupSound();
+            }
+        }
+
+        /* =========================================
+           MONSTER EMOTE BADGE
+           ========================================= */
+        let emoteTimeout = null;
+
+        function showMonsterEmote(text) {
+            dom.monsterEmote.textContent = text;
+            dom.monsterEmote.classList.add('show');
+            clearTimeout(emoteTimeout);
+            emoteTimeout = setTimeout(() => {
+                dom.monsterEmote.classList.remove('show');
+            }, 950);
+        }
+
+        /* =========================================
+           GRADE & QUESTION GENERATION
+           ========================================= */
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function setGrade(gradeLevel) {
+            state.grade = gradeLevel;
+            dom.btnGrade1.classList.toggle('active', gradeLevel === 1);
+            dom.btnGrade2.classList.toggle('active', gradeLevel === 2);
+            playPickupSound();
+            startNewRound();
+        }
+
+        function startNewRound() {
+            state.questionIndex = 0;
+            state.streak = 0;
+            updateStatsUI();
+            dom.celebrationScreen.classList.remove('active');
+            dom.playArea.style.display = 'flex';
+            dom.progressSection.style.display = 'flex';
+            nextQuestion();
+        }
+
+        function generateSubtractionProblem() {
+            let start, eaten;
+            if (state.grade === 1) {
+                // Grade 1: numbers within 10 (monster eats 1 to 9)
+                start = randInt(3, 10);
+                eaten = randInt(1, start - 1);
+            } else {
+                // Grade 2: numbers up to 18 (monster eats 2 to 15)
+                start = randInt(10, 18);
+                eaten = randInt(2, start - 2);
+            }
+            return { start, eaten, left: start - eaten };
+        }
+
+        function generatePlateCounts(correctEaten) {
+            const choices = new Set([correctEaten]);
+            const maxAllowed = state.grade === 1 ? 10 : 16;
+            const offsets = [-3, -2, -1, 1, 2, 3, 4];
+
+            while (choices.size < 4) {
+                const offset = offsets[randInt(0, offsets.length - 1)];
+                const candidate = correctEaten + offset;
+                if (candidate >= 1 && candidate <= maxAllowed && candidate !== correctEaten) {
+                    choices.add(candidate);
+                }
+            }
+
+            // Shuffle plate order
+            const arr = Array.from(choices);
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function nextQuestion() {
+            if (state.questionIndex >= state.totalQuestions) {
+                showCelebration();
+                return;
+            }
+
+            state.isSolved = false;
+            const { start, eaten, left } = generateSubtractionProblem();
+            state.startNum = start;
+            state.eatenTarget = eaten;
+            state.leftNum = left;
+            state.treatEmoji = treatEmojis[state.questionIndex % treatEmojis.length];
+
+            // Update equation board: Start - [Monster Mouth] = Left
+            dom.num1.textContent = start;
+            dom.resultNum.textContent = left;
+            dom.monsterEatenBadge.classList.remove('show');
+            dom.monsterDropZone.classList.remove('happy-glow', 'wrong-shake', 'mouth-open');
+
+            // Update progress bar
+            const pct = (state.questionIndex / state.totalQuestions) * 100;
+            dom.progressFill.style.width = `${pct}%`;
+            dom.progressText.textContent = `${state.questionIndex + 1} / ${state.totalQuestions}`;
+
+            renderFourPlates(eaten);
+        }
+
+        function renderFourPlates(correctCount) {
+            dom.platesGrid.innerHTML = '';
+            const plateCounts = generatePlateCounts(correctCount);
+
+            plateCounts.forEach((count) => {
+                const slot = document.createElement('div');
+                slot.className = 'plate-slot';
+
+                const plate = document.createElement('div');
+                plate.className = 'cookie-plate';
+                plate.dataset.count = count;
+
+                const cluster = document.createElement('div');
+                cluster.className = 'cookies-cluster';
+
+                for (let i = 0; i < count; i++) {
+                    const span = document.createElement('span');
+                    span.className = count > 8 ? 'cookie-emoji compact' : 'cookie-emoji';
+                    span.textContent = state.treatEmoji;
+                    cluster.appendChild(span);
+                }
+
+                plate.appendChild(cluster);
+
+                setupPlateDrag(plate, count);
+                slot.appendChild(plate);
+                dom.platesGrid.appendChild(slot);
+            });
+        }
+
+        /* =========================================
+           POINTER DRAG & DROP PLATE TO MONSTER
+           ========================================= */
+        function isOverMonster(plateRect) {
+            const monsterRect = dom.monsterStage.getBoundingClientRect();
+            const pad = 16;
+            return !(
+                plateRect.right < monsterRect.left - pad ||
+                plateRect.left > monsterRect.right + pad ||
+                plateRect.bottom < monsterRect.top - pad ||
+                plateRect.top > monsterRect.bottom + pad
+            );
+        }
+
+        function setupPlateDrag(plateEl, count) {
+            let isDragging = false;
+            let hasMoved = false;
+            let startX = 0;
+            let startY = 0;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            const onPointerDown = (e) => {
+                if (state.isSolved || plateEl.classList.contains('wrong') || plateEl.classList.contains('disabled')) {
+                    return;
+                }
+                e.preventDefault();
+                ensureAudio();
+
+                const rect = plateEl.getBoundingClientRect();
+                isDragging = true;
+                hasMoved = false;
+                startX = e.clientX;
+                startY = e.clientY;
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+
+                plateEl.setPointerCapture(e.pointerId);
+                plateEl.addEventListener('pointermove', onPointerMove);
+                plateEl.addEventListener('pointerup', onPointerUp);
+                plateEl.addEventListener('pointercancel', onPointerUp);
+            };
+
+            const onPointerMove = (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                // Require deliberate drag (> 8px) so clicks never submit an answer
+                if (!hasMoved && Math.hypot(dx, dy) > 8) {
+                    hasMoved = true;
+                    const rect = plateEl.getBoundingClientRect();
+                    plateEl.style.width = `${rect.width}px`;
+                    plateEl.style.height = `${rect.height}px`;
+                    plateEl.classList.add('dragging');
+                    playPickupSound();
+                }
+
+                if (hasMoved) {
+                    plateEl.style.left = `${e.clientX - offsetX}px`;
+                    plateEl.style.top = `${e.clientY - offsetY}px`;
+
+                    if (isOverMonster(plateEl.getBoundingClientRect())) {
+                        dom.monsterDropZone.classList.add('mouth-open');
+                    } else {
+                        dom.monsterDropZone.classList.remove('mouth-open');
+                    }
+                }
+            };
+
+            const onPointerUp = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                plateEl.removeEventListener('pointermove', onPointerMove);
+                plateEl.removeEventListener('pointerup', onPointerUp);
+                plateEl.removeEventListener('pointercancel', onPointerUp);
+
+                const droppedOnMonster = hasMoved && isOverMonster(plateEl.getBoundingClientRect());
+                dom.monsterDropZone.classList.remove('mouth-open');
+
+                plateEl.classList.remove('dragging');
+                plateEl.style.width = '';
+                plateEl.style.height = '';
+                plateEl.style.left = '';
+                plateEl.style.top = '';
+
+                if (droppedOnMonster) {
+                    evaluatePlate(count, plateEl);
+                } else {
+                    plateEl.classList.remove('snap-wobble');
+                    void plateEl.offsetWidth;
+                    plateEl.classList.add('snap-wobble');
+                    setTimeout(() => plateEl.classList.remove('snap-wobble'), 420);
+                }
+            };
+
+            plateEl.addEventListener('pointerdown', onPointerDown);
+        }
+
+        /* =========================================
+           PLATE EVALUATION & PROGRESSION
+           ========================================= */
+        function evaluatePlate(selectedCount, plateEl) {
+            if (state.isSolved) return;
+
+            if (selectedCount === state.eatenTarget) {
+                state.isSolved = true;
+                state.stars += 1;
+                state.streak += 1;
+                if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+                updateStatsUI();
+
+                playChompAndBurp();
+                launchConfetti(60);
+
+                // Show eaten count on Munchy & sparkle on eaten plate
+                dom.monsterEatenBadge.textContent = selectedCount;
+                dom.monsterEatenBadge.classList.add('show');
+                plateEl.classList.add('correct');
+                plateEl.querySelector('.cookies-cluster').innerHTML = '<span style="font-size:2.6rem;">😋✨</span>';
+
+                document.querySelectorAll('.cookie-plate').forEach((p) => p.classList.add('disabled'));
+
+                dom.monsterDropZone.classList.add('happy-glow');
+                dom.monsterStage.classList.remove('burp-happy');
+                void dom.monsterStage.offsetWidth;
+                dom.monsterStage.classList.add('burp-happy');
+                showMonsterEmote('YUM! 😋');
+
+                state.questionIndex += 1;
+                const pct = (state.questionIndex / state.totalQuestions) * 100;
+                dom.progressFill.style.width = `${pct}%`;
+
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1400);
+            } else {
+                // Wrong plate! Reject it and keep playing until they pick the right plate
+                state.streak = 0;
+                updateStatsUI();
+                playGentleOops();
+
+                plateEl.classList.add('wrong', 'disabled');
+
+                dom.monsterDropZone.classList.remove('wrong-shake');
+                void dom.monsterDropZone.offsetWidth;
+                dom.monsterDropZone.classList.add('wrong-shake');
+                showMonsterEmote('BLEH! 😝');
+            }
+        }
+
+        function updateStatsUI() {
+            dom.starCount.textContent = state.stars;
+            dom.streakCount.textContent = state.streak;
+        }
+
+        function showCelebration() {
+            playVictoryFanfare();
+            launchConfetti(140);
+
+            dom.playArea.style.display = 'none';
+            dom.progressSection.style.display = 'none';
+            dom.celebrationScreen.classList.add('active');
+
+            dom.finalStars.textContent = `${state.stars} ⭐`;
+            dom.finalStreak.textContent = `${state.bestStreak} 🔥`;
+        }
+
+        /* =========================================
+           CONFETTI PARTICLE SYSTEM
+           ========================================= */
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const ctx = confettiCanvas.getContext('2d');
+        let particles = [];
+        let animId = null;
+
+        function resizeConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfetti);
+        resizeConfetti();
+
+        function launchConfetti(count = 60) {
+            const colors = ['#facc15', '#a855f7', '#22c55e', '#ec4899', '#38bdf8', '#fb923c'];
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: confettiCanvas.width * (0.15 + Math.random() * 0.7),
+                    y: confettiCanvas.height * 0.35,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: -Math.random() * 12 - 4,
+                    size: Math.random() * 9 + 6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    vRot: (Math.random() - 0.5) * 12
+                });
+            }
+            if (!animId) animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            particles.forEach((p) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.35;
+                p.vx *= 0.99;
+                p.rotation += p.vRot;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+                ctx.restore();
+            });
+
+            particles = particles.filter((p) => p.y < confettiCanvas.height + 30);
+            if (particles.length > 0) {
+                animId = requestAnimationFrame(animateConfetti);
+            } else {
+                animId = null;
+            }
+        }
+
+        /* =========================================
+           INITIALIZE GAME ON LOAD
+           ========================================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            startNewRound();
+        });
+    </script>
+</body>
+</html>

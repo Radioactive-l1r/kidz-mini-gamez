@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Adventure: Addition Fun!</title>
+    <style>
+        /* CSS Variables for a bright, kid-friendly palette */
+        :root {
+            --bg-sky: #e0f2fe;
+            --bg-grass: #dcfce7;
+            --card-bg: #ffffff;
+            --primary-blue: #0284c7;
+            --primary-blue-dark: #0369a1;
+            --accent-yellow: #facc15;
+            --accent-yellow-dark: #eab308;
+            --success-green: #22c55e;
+            --success-green-dark: #16a34a;
+            --error-coral: #f87171;
+            --error-coral-dark: #ef4444;
+            --purple-fun: #a855f7;
+            --purple-fun-dark: #9333ea;
+            --orange-toy: #fb923c;
+            --orange-toy-dark: #ea580c;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --shadow-soft: 0 14px 30px -5px rgba(2, 132, 199, 0.18), 0 8px 12px -6px rgba(0, 0, 0, 0.1);
+            --shadow-btn: 0 7px 0px;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 55%, #bbf7d0 55%, #86efac 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            padding: 16px;
+        }
+
+        /* Decorative Floating Clouds & Sparkles */
+        .cloud {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50px;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatCloud linear infinite;
+        }
+        .cloud::after, .cloud::before {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+        }
+        .cloud-1 { width: 130px; height: 42px; top: 6%; left: -160px; animation-duration: 36s; }
+        .cloud-1::before { width: 54px; height: 54px; top: -26px; left: 16px; }
+        .cloud-1::after { width: 74px; height: 74px; top: -36px; right: 16px; }
+
+        .cloud-2 { width: 170px; height: 54px; top: 16%; left: -210px; animation-duration: 50s; animation-delay: 10s; }
+        .cloud-2::before { width: 68px; height: 68px; top: -32px; left: 26px; }
+        .cloud-2::after { width: 88px; height: 88px; top: -42px; right: 22px; }
+
+        @keyframes floatCloud {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(100vw + 260px)); }
+        }
+
+        /* Main Game Container */
+        .game-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: 34px;
+            box-shadow: var(--shadow-soft);
+            border: 6px solid #ffffff;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* One-Line Instruction Pill */
+        .play-hint {
+            align-self: center;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--primary-blue-dark);
+            background: #f0f9ff;
+            border: 2px solid #7dd3fc;
+            padding: 6px 18px;
+            border-radius: 999px;
+            text-align: center;
+        }
+
+        /* Top Header Bar */
+        .header-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 3px dashed #e2e8f0;
+        }
+
+        /* Mode Toggle Pills */
+        .mode-selector {
+            display: flex;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 20px;
+            gap: 6px;
+        }
+
+        .mode-btn {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            font-family: inherit;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 4px 0 var(--primary-blue-dark);
+        }
+
+        /* Stats & Audio Controls */
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fef9c3;
+            border: 2px solid #fde047;
+            padding: 8px 14px;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: #854d0e;
+        }
+
+        .streak-badge {
+            background: #ffedd5;
+            border-color: #fdba74;
+            color: #9a3412;
+        }
+
+        .icon-btn {
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            font-size: 1.35rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #e2e8f0;
+            transform: scale(1.06);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Progress Bar Section */
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #38bdf8, #22c55e);
+            border-radius: 999px;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .progress-text {
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--text-muted);
+            min-width: 65px;
+            text-align: right;
+        }
+
+        /* Question & Visual Aid Area */
+        .play-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            padding: 4px 0;
+        }
+
+        .equation-board {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 4px solid #cbd5e1;
+            border-radius: 28px;
+            padding: 18px 24px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .num-box {
+            font-size: clamp(2.6rem, 6.5vw, 4rem);
+            font-weight: 900;
+            color: var(--primary-blue-dark);
+            background: #e0f2fe;
+            min-width: 86px;
+            padding: 8px 18px;
+            border-radius: 22px;
+            text-align: center;
+            border: 3px solid #7dd3fc;
+            box-shadow: 0 5px 0 #7dd3fc;
+        }
+
+        .num-box.second {
+            color: var(--purple-fun-dark);
+            background: #f3e8ff;
+            border-color: #d8b4fe;
+            box-shadow: 0 5px 0 #d8b4fe;
+        }
+
+        .operator {
+            font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+            font-weight: 900;
+            color: var(--text-muted);
+        }
+
+        /* Glowing Drop-Zone Target Box */
+        .answer-slot {
+            position: relative;
+            font-size: clamp(2.6rem, 6.5vw, 4rem);
+            font-weight: 900;
+            min-width: 112px;
+            min-height: 84px;
+            padding: 8px 20px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fefce8;
+            border: 4px dashed #f59e0b;
+            color: #d97706;
+            box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.15), inset 0 2px 8px rgba(245, 158, 11, 0.15);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+            animation: dropZoneGlow 2.2s infinite ease-in-out;
+        }
+
+        @keyframes dropZoneGlow {
+            0%, 100% { box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.15), inset 0 2px 8px rgba(245, 158, 11, 0.12); }
+            50% { box-shadow: 0 0 0 9px rgba(251, 191, 36, 0.28), inset 0 2px 10px rgba(245, 158, 11, 0.22); }
+        }
+
+        .answer-slot.drag-over {
+            transform: scale(1.16);
+            background: #fef08a;
+            border: 4px solid #ea580c;
+            color: #ea580c;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.65);
+            animation: none;
+        }
+
+        .answer-slot.solved {
+            background: #dcfce7;
+            border: 4px solid var(--success-green);
+            color: var(--success-green-dark);
+            box-shadow: 0 6px 0 #86efac;
+            transform: scale(1.08);
+            animation: none;
+        }
+
+        .answer-slot.wrong-drop {
+            background: #fee2e2;
+            border-color: var(--error-coral-dark);
+            color: var(--error-coral-dark);
+            animation: shakeHorizontal 0.4s ease;
+        }
+
+        /* Visual Counting Aid Container */
+        .visual-aid-container {
+            width: 100%;
+            min-height: 92px;
+            background: #fffbeb;
+            border: 3px solid #fde68a;
+            border-radius: 24px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+        }
+
+        .visual-aid-container.highlight-hint {
+            border-color: #f97316;
+            background: #fff7ed;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
+            animation: pulseHint 1s ease infinite;
+        }
+
+        @keyframes pulseHint {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .aid-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            max-width: 44%;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .aid-item {
+            font-size: 1.7rem;
+            line-height: 1;
+            display: inline-block;
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .aid-item:hover {
+            transform: scale(1.25);
+        }
+
+        .aid-plus {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #d97706;
+        }
+
+        /* Base-10 Blocks for Grade 2 larger numbers */
+        .ten-rod {
+            display: inline-flex;
+            flex-direction: column;
+            width: 16px;
+            height: 54px;
+            background: #38bdf8;
+            border: 2px solid #0284c7;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 2px;
+            animation: popIn 0.35s backwards;
+        }
+        .ten-rod span {
+            flex: 1;
+            border-bottom: 1px solid rgba(255,255,255,0.6);
+        }
+        .one-cube {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: #facc15;
+            border: 2px solid #ca8a04;
+            border-radius: 4px;
+            margin: 2px;
+            animation: popIn 0.35s backwards;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Draggable Toy Number Tiles Tray */
+        .choices-tray {
+            background: #f1f5f9;
+            border: 3px dashed #cbd5e1;
+            border-radius: 26px;
+            padding: 16px;
+            width: 100%;
+        }
+
+        .choices-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            width: 100%;
+        }
+
+        @media (min-width: 600px) {
+            .choices-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Slot placeholder so layout doesn't jump while dragging a tile */
+        .tile-slot {
+            position: relative;
+            height: 86px;
+            border-radius: 24px;
+            background: rgba(203, 213, 225, 0.35);
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Playful Chunky Draggable Toy Tile */
+        .choice-tile {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 3px solid #38bdf8;
+            border-radius: 24px;
+            font-size: 2.25rem;
+            font-weight: 900;
+            font-family: inherit;
+            color: var(--primary-blue-dark);
+            cursor: grab;
+            touch-action: none;
+            box-shadow: var(--shadow-btn) #38bdf8, 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+            animation: tileIdleBob 2.6s ease-in-out infinite;
+        }
+
+        /* Staggered whimsical idle animations & vibrant toy borders for each tile */
+        .tile-slot:nth-child(1) .choice-tile {
+            border-color: #38bdf8;
+            box-shadow: var(--shadow-btn) #0284c7;
+            color: #0369a1;
+            animation-delay: 0s;
+        }
+        .tile-slot:nth-child(2) .choice-tile {
+            border-color: #c084fc;
+            box-shadow: var(--shadow-btn) #9333ea;
+            color: #7e22ce;
+            animation-delay: 0.45s;
+        }
+        .tile-slot:nth-child(3) .choice-tile {
+            border-color: #fb923c;
+            box-shadow: var(--shadow-btn) #ea580c;
+            color: #c2410c;
+            animation-delay: 0.9s;
+        }
+        .tile-slot:nth-child(4) .choice-tile {
+            border-color: #f472b6;
+            box-shadow: var(--shadow-btn) #db2777;
+            color: #be185d;
+            animation-delay: 1.35s;
+        }
+
+        @keyframes tileIdleBob {
+            0%, 100% { transform: translateY(0px) rotate(-1.8deg); }
+            50% { transform: translateY(-6px) rotate(1.8deg); }
+        }
+
+        .choice-tile:hover:not(.disabled):not(.dragging) {
+            transform: translateY(-8px) scale(1.05) rotate(0deg);
+            animation-play-state: paused;
+        }
+
+        /* Active Dragging State */
+        .choice-tile.dragging {
+            position: fixed;
+            z-index: 9999;
+            cursor: grabbing;
+            animation: none !important;
+            transform: scale(1.18) rotate(-6deg);
+            box-shadow: 0 22px 35px rgba(0, 0, 0, 0.25), 0 8px 0 rgba(2, 132, 199, 0.4);
+            pointer-events: none;
+            transition: transform 0.08s ease-out;
+        }
+
+        .choice-tile.correct {
+            background: var(--success-green);
+            border-color: var(--success-green-dark);
+            box-shadow: var(--shadow-btn) var(--success-green-dark);
+            color: white;
+            animation: bounceCelebrate 0.5s ease;
+        }
+
+        .choice-tile.wrong {
+            background: #fee2e2;
+            border-color: var(--error-coral);
+            box-shadow: 0 4px 0 var(--error-coral);
+            color: var(--error-coral-dark);
+            opacity: 0.55;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        .choice-tile.disabled {
+            pointer-events: none;
+        }
+
+        .choice-tile.snap-wobble {
+            animation: shakeHorizontal 0.4s ease !important;
+        }
+
+        .key-hint {
+            position: absolute;
+            top: 7px;
+            left: 11px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #94a3b8;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        @keyframes shakeHorizontal {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        @keyframes bounceCelebrate {
+            0%, 100% { transform: scale(1); }
+            40% { transform: scale(1.14); }
+            70% { transform: scale(0.96); }
+        }
+
+        /* Celebration Trophy Screen */
+        .celebration-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            padding: 24px 12px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .celebration-screen.active {
+            display: flex;
+        }
+
+        .trophy-icon {
+            font-size: 6rem;
+            filter: drop-shadow(0 10px 15px rgba(234, 179, 8, 0.4));
+            animation: trophyFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes trophyFloat {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        .celebration-title {
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: var(--primary-blue-dark);
+        }
+
+        .celebration-stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .final-stat-box {
+            background: #f8fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 16px 24px;
+            min-width: 140px;
+        }
+
+        .final-stat-val {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--purple-fun-dark);
+        }
+
+        .final-stat-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .play-again-btn {
+            background: var(--success-green);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 18px 40px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: var(--shadow-btn) var(--success-green-dark);
+            transition: all 0.15s ease;
+            margin-top: 8px;
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-3px);
+            background: #16a34a;
+        }
+
+        .play-again-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 var(--success-green-dark);
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Decorative Clouds -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+
+    <!-- Confetti Overlay -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Main Game Card -->
+    <main class="game-container" id="game-card">
+        
+        <!-- Header: Difficulty Mode, Stars, Streak, Mute -->
+        <header class="header-bar">
+            <div class="mode-selector" role="group" aria-label="Grade Level">
+                <button class="mode-btn active" id="btn-grade1" onclick="setGrade(1)">🌟 Grade 1</button>
+                <button class="mode-btn" id="btn-grade2" onclick="setGrade(2)">🚀 Grade 2</button>
+            </div>
+
+            <div class="controls-group">
+                <div class="stat-badge" title="Total Stars Earned">
+                    <span>⭐</span>
+                    <span id="star-count">0</span>
+                </div>
+                <div class="stat-badge streak-badge" title="Current Streak">
+                    <span>🔥</span>
+                    <span id="streak-count">0</span>
+                </div>
+                <button class="icon-btn" id="mute-btn" onclick="toggleMute()" title="Toggle Sound" aria-label="Toggle Sound">
+                    🔊
+                </button>
+            </div>
+        </header>
+
+        <!-- Round Progress Bar -->
+        <div class="progress-wrapper" id="progress-section">
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text">1 / 10</div>
+        </div>
+
+        <!-- Active Gameplay View -->
+        <section class="play-area" id="play-area">
+            
+            <div class="play-hint">Drag the right number into the yellow <strong>?</strong> box! ➕✨</div>
+
+            <!-- Number Equation with Drop Zone -->
+            <div class="equation-board" aria-live="polite">
+                <div class="num-box" id="num1">3</div>
+                <div class="operator">+</div>
+                <div class="num-box second" id="num2">4</div>
+                <div class="operator">=</div>
+                <div class="answer-slot" id="answer-slot" aria-label="Drop answer here">?</div>
+            </div>
+
+            <!-- Visual Counting Aids (Fruits, Stars, or Base-10 Blocks) -->
+            <div class="visual-aid-container" id="visual-aid" title="Tap the pictures to count!">
+                <!-- Populated dynamically by JS -->
+            </div>
+
+            <!-- 4 Floating Draggable Number Tiles -->
+            <div class="choices-tray">
+                <div class="choices-grid" id="choices-grid">
+                    <!-- Populated dynamically by JS -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- End-of-Round Celebration Trophy Screen -->
+        <section class="celebration-screen" id="celebration-screen">
+            <div class="trophy-icon">🏆</div>
+            <h1 class="celebration-title">Awesome Job!</h1>
+            
+            <div class="celebration-stats">
+                <div class="final-stat-box">
+                    <div class="final-stat-val" id="final-stars">10 ⭐</div>
+                    <div class="final-stat-label">Stars</div>
+                </div>
+                <div class="final-stat-box">
+                    <div class="final-stat-val" id="final-streak">5 🔥</div>
+                    <div class="final-stat-label">Streak</div>
+                </div>
+            </div>
+
+            <button class="play-again-btn" onclick="startNewRound()">
+                Play Again! 🎮
+            </button>
+        </section>
+
+    </main>
+
+    <script>
+        /* =========================================
+           GAME STATE & CONFIGURATION
+           ========================================= */
+        const state = {
+            grade: 1,
+            stars: 0,
+            streak: 0,
+            bestStreak: 0,
+            questionIndex: 0,
+            totalQuestions: 10,
+            num1: 3,
+            num2: 4,
+            answer: 7,
+            isSolved: false,
+            isMuted: false,
+            firstTry: true
+        };
+
+        const countingEmojis = ['🍎', '⭐', '🚀', '🍓', '🐶', '🎈', '🍪', '🦋', '⚽', '🦖'];
+
+        const dom = {
+            btnGrade1: document.getElementById('btn-grade1'),
+            btnGrade2: document.getElementById('btn-grade2'),
+            starCount: document.getElementById('star-count'),
+            streakCount: document.getElementById('streak-count'),
+            muteBtn: document.getElementById('mute-btn'),
+            progressSection: document.getElementById('progress-section'),
+            progressFill: document.getElementById('progress-fill'),
+            progressText: document.getElementById('progress-text'),
+            playArea: document.getElementById('play-area'),
+            num1: document.getElementById('num1'),
+            num2: document.getElementById('num2'),
+            answerSlot: document.getElementById('answer-slot'),
+            visualAid: document.getElementById('visual-aid'),
+            choicesGrid: document.getElementById('choices-grid'),
+            celebrationScreen: document.getElementById('celebration-screen'),
+            finalStars: document.getElementById('final-stars'),
+            finalStreak: document.getElementById('final-streak')
+        };
+
+        /* =========================================
+           WEB AUDIO SYNTHESIZER (NO EXTERNAL FILES)
+           ========================================= */
+        let audioCtx = null;
+
+        function ensureAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.15, delay = 0, volume = 0.2) {
+            if (state.isMuted) return;
+            ensureAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime + delay;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.exponentialRampToValueAtTime(volume, now + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + duration + 0.02);
+        }
+
+        function playPickupSound() {
+            playTone(440, 'sine', 0.09, 0, 0.15);
+            playTone(587.33, 'sine', 0.1, 0.04, 0.15);
+        }
+
+        function playCountPop() {
+            playTone(520 + Math.random() * 140, 'triangle', 0.08, 0, 0.15);
+        }
+
+        function playSuccessSound() {
+            playTone(523.25, 'triangle', 0.18, 0, 0.25);     // C5
+            playTone(659.25, 'triangle', 0.18, 0.09, 0.25);  // E5
+            playTone(783.99, 'triangle', 0.18, 0.18, 0.25);  // G5
+            playTone(1046.50, 'triangle', 0.35, 0.27, 0.28); // C6
+        }
+
+        function playGentleTryAgain() {
+            playTone(311.13, 'sine', 0.18, 0, 0.18);   // Eb4
+            playTone(261.63, 'sine', 0.24, 0.12, 0.18); // C4
+        }
+
+        function playVictoryFanfare() {
+            const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+            const times = [0, 0.12, 0.24, 0.36, 0.54, 0.68];
+            notes.forEach((n, i) => playTone(n, 'triangle', 0.25, times[i], 0.25));
+        }
+
+        function toggleMute() {
+            state.isMuted = !state.isMuted;
+            dom.muteBtn.textContent = state.isMuted ? '🔇' : '🔊';
+            if (!state.isMuted) {
+                playPickupSound();
+            }
+        }
+
+        /* =========================================
+           GRADE & QUESTION GENERATION
+           ========================================= */
+        function setGrade(gradeLevel) {
+            state.grade = gradeLevel;
+            dom.btnGrade1.classList.toggle('active', gradeLevel === 1);
+            dom.btnGrade2.classList.toggle('active', gradeLevel === 2);
+            playPickupSound();
+            startNewRound();
+        }
+
+        function startNewRound() {
+            state.questionIndex = 0;
+            state.streak = 0;
+            updateStatsUI();
+            dom.celebrationScreen.classList.remove('active');
+            dom.playArea.style.display = 'flex';
+            dom.progressSection.style.display = 'flex';
+            nextQuestion();
+        }
+
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateProblem() {
+            let a, b;
+            if (state.grade === 1) {
+                // Grade 1: gentle ramp-up within 10 first, then up to 18
+                if (state.questionIndex < 5) {
+                    a = randInt(1, 6);
+                    b = randInt(1, 10 - a);
+                } else {
+                    a = randInt(2, 9);
+                    b = randInt(2, 9);
+                }
+            } else {
+                // Grade 2: two-digit + one-digit or two-digit without heavy regrouping
+                if (state.questionIndex < 5) {
+                    const tens = randInt(1, 4) * 10;
+                    const onesA = randInt(1, 5);
+                    a = tens + onesA;
+                    b = randInt(2, 9 - onesA);
+                } else {
+                    const tensA = randInt(1, 4) * 10;
+                    const tensB = randInt(1, 4) * 10;
+                    const onesA = randInt(1, 5);
+                    const onesB = randInt(1, 9 - onesA);
+                    a = tensA + onesA;
+                    b = tensB + onesB;
+                }
+            }
+            return { a, b, sum: a + b };
+        }
+
+        function generateChoices(correctSum) {
+            const choices = new Set([correctSum]);
+            const offsets = [-3, -2, -1, 1, 2, 3, 4, 10, -10];
+
+            while (choices.size < 4) {
+                const offset = offsets[randInt(0, offsets.length - 1)];
+                const candidate = correctSum + offset;
+                if (candidate >= 1 && candidate <= 99 && candidate !== correctSum) {
+                    choices.add(candidate);
+                }
+            }
+
+            // Fisher-Yates shuffle
+            const arr = Array.from(choices);
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function renderVisualAid(a, b) {
+            dom.visualAid.innerHTML = '';
+            dom.visualAid.classList.remove('highlight-hint');
+
+            // Use emojis when both numbers are <= 10, otherwise use Base-10 tens rods & ones cubes
+            if (a <= 10 && b <= 10) {
+                const emoji = countingEmojis[state.questionIndex % countingEmojis.length];
+                const group1 = document.createElement('div');
+                group1.className = 'aid-group';
+                for (let i = 0; i < a; i++) {
+                    const item = document.createElement('span');
+                    item.className = 'aid-item';
+                    item.textContent = emoji;
+                    item.style.animationDelay = `${i * 0.04}s`;
+                    item.onclick = () => {
+                        playCountPop();
+                        item.style.transform = 'scale(1.35)';
+                        setTimeout(() => (item.style.transform = ''), 180);
+                    };
+                    group1.appendChild(item);
+                }
+
+                const plus = document.createElement('div');
+                plus.className = 'aid-plus';
+                plus.textContent = '+';
+
+                const group2 = document.createElement('div');
+                group2.className = 'aid-group';
+                for (let i = 0; i < b; i++) {
+                    const item = document.createElement('span');
+                    item.className = 'aid-item';
+                    item.textContent = emoji;
+                    item.style.animationDelay = `${(a + i) * 0.04}s`;
+                    item.onclick = () => {
+                        playCountPop();
+                        item.style.transform = 'scale(1.35)';
+                        setTimeout(() => (item.style.transform = ''), 180);
+                    };
+                    group2.appendChild(item);
+                }
+
+                dom.visualAid.appendChild(group1);
+                dom.visualAid.appendChild(plus);
+                dom.visualAid.appendChild(group2);
+            } else {
+                const buildBlocks = (num) => {
+                    const group = document.createElement('div');
+                    group.className = 'aid-group';
+                    const tens = Math.floor(num / 10);
+                    const ones = num % 10;
+
+                    for (let t = 0; t < tens; t++) {
+                        const rod = document.createElement('div');
+                        rod.className = 'ten-rod';
+                        rod.title = '10';
+                        for (let s = 0; s < 10; s++) {
+                            rod.appendChild(document.createElement('span'));
+                        }
+                        group.appendChild(rod);
+                    }
+                    for (let o = 0; o < ones; o++) {
+                        const cube = document.createElement('div');
+                        cube.className = 'one-cube';
+                        cube.title = '1';
+                        group.appendChild(cube);
+                    }
+                    return group;
+                };
+
+                const plus = document.createElement('div');
+                plus.className = 'aid-plus';
+                plus.textContent = '+';
+
+                dom.visualAid.appendChild(buildBlocks(a));
+                dom.visualAid.appendChild(plus);
+                dom.visualAid.appendChild(buildBlocks(b));
+            }
+        }
+
+        function nextQuestion() {
+            if (state.questionIndex >= state.totalQuestions) {
+                showCelebration();
+                return;
+            }
+
+            state.isSolved = false;
+            state.firstTry = true;
+
+            const { a, b, sum } = generateProblem();
+            state.num1 = a;
+            state.num2 = b;
+            state.answer = sum;
+
+            dom.num1.textContent = a;
+            dom.num2.textContent = b;
+            dom.answerSlot.textContent = '?';
+            dom.answerSlot.className = 'answer-slot';
+
+            renderVisualAid(a, b);
+
+            // Update progress bar
+            const pct = (state.questionIndex / state.totalQuestions) * 100;
+            dom.progressFill.style.width = `${pct}%`;
+            dom.progressText.textContent = `${state.questionIndex + 1} / ${state.totalQuestions}`;
+
+            // Render 4 draggable number tiles
+            const options = generateChoices(sum);
+            dom.choicesGrid.innerHTML = '';
+
+            options.forEach((val) => {
+                const slot = document.createElement('div');
+                slot.className = 'tile-slot';
+
+                const tile = document.createElement('div');
+                tile.className = 'choice-tile';
+                tile.textContent = val;
+                tile.dataset.value = val;
+
+                setupDragAndDrop(tile, val);
+                slot.appendChild(tile);
+                dom.choicesGrid.appendChild(slot);
+            });
+        }
+
+        /* =========================================
+           POINTER DRAG-AND-DROP (DRAG ONLY, NO CLICK)
+           ========================================= */
+        function isOverlappingDropZone(tileRect) {
+            const targetRect = dom.answerSlot.getBoundingClientRect();
+            const pad = 18;
+            return !(
+                tileRect.right < targetRect.left - pad ||
+                tileRect.left > targetRect.right + pad ||
+                tileRect.bottom < targetRect.top - pad ||
+                tileRect.top > targetRect.bottom + pad
+            );
+        }
+
+        function setupDragAndDrop(tile, value) {
+            let isDragging = false;
+            let hasMoved = false;
+            let startX = 0;
+            let startY = 0;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            const onPointerDown = (e) => {
+                if (state.isSolved || tile.classList.contains('wrong') || tile.classList.contains('disabled')) {
+                    return;
+                }
+                e.preventDefault();
+                ensureAudio();
+
+                const rect = tile.getBoundingClientRect();
+                isDragging = true;
+                hasMoved = false;
+                startX = e.clientX;
+                startY = e.clientY;
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+
+                tile.setPointerCapture(e.pointerId);
+                tile.addEventListener('pointermove', onPointerMove);
+                tile.addEventListener('pointerup', onPointerUp);
+                tile.addEventListener('pointercancel', onPointerUp);
+            };
+
+            const onPointerMove = (e) => {
+                if (!isDragging) return;
+
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                // Require a deliberate drag movement (> 8px) so clicks never trigger dragging
+                if (!hasMoved && Math.hypot(dx, dy) > 8) {
+                    hasMoved = true;
+                    const rect = tile.getBoundingClientRect();
+                    tile.style.width = `${rect.width}px`;
+                    tile.style.height = `${rect.height}px`;
+                    tile.classList.add('dragging');
+                    playPickupSound();
+                }
+
+                if (hasMoved) {
+                    tile.style.left = `${e.clientX - offsetX}px`;
+                    tile.style.top = `${e.clientY - offsetY}px`;
+
+                    const tileRect = tile.getBoundingClientRect();
+                    if (isOverlappingDropZone(tileRect)) {
+                        dom.answerSlot.classList.add('drag-over');
+                    } else {
+                        dom.answerSlot.classList.remove('drag-over');
+                    }
+                }
+            };
+
+            const onPointerUp = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                tile.removeEventListener('pointermove', onPointerMove);
+                tile.removeEventListener('pointerup', onPointerUp);
+                tile.removeEventListener('pointercancel', onPointerUp);
+
+                const tileRect = tile.getBoundingClientRect();
+                const droppedInTarget = hasMoved && isOverlappingDropZone(tileRect);
+                dom.answerSlot.classList.remove('drag-over');
+
+                // Reset inline positioning so tile snaps cleanly back to its tray slot
+                tile.classList.remove('dragging');
+                tile.style.width = '';
+                tile.style.height = '';
+                tile.style.left = '';
+                tile.style.top = '';
+
+                // ONLY evaluate if the tile was actually dragged and dropped onto the '?' drop zone
+                if (hasMoved && droppedInTarget) {
+                    evaluateAnswer(value, tile);
+                } else {
+                    // Gently wobble the tile back in its tray
+                    tile.classList.remove('snap-wobble');
+                    void tile.offsetWidth;
+                    tile.classList.add('snap-wobble');
+                    setTimeout(() => tile.classList.remove('snap-wobble'), 420);
+                }
+            };
+
+            tile.addEventListener('pointerdown', onPointerDown);
+        }
+
+        /* =========================================
+           ANSWER EVALUATION & PROGRESSION
+           ========================================= */
+        function evaluateAnswer(selectedValue, tileEl) {
+            if (state.isSolved) return;
+
+            if (selectedValue === state.answer) {
+                state.isSolved = true;
+                playSuccessSound();
+
+                dom.answerSlot.textContent = selectedValue;
+                dom.answerSlot.classList.add('solved');
+                tileEl.classList.add('correct');
+
+                // Disable remaining tiles
+                document.querySelectorAll('.choice-tile').forEach((t) => t.classList.add('disabled'));
+
+                // Award stars & streak
+                state.stars += 1;
+                state.streak += 1;
+                if (state.streak > state.bestStreak) {
+                    state.bestStreak = state.streak;
+                }
+                updateStatsUI();
+
+                launchConfetti(45);
+
+                state.questionIndex += 1;
+                const pct = (state.questionIndex / state.totalQuestions) * 100;
+                dom.progressFill.style.width = `${pct}%`;
+
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1350);
+            } else {
+                state.firstTry = false;
+                state.streak = 0;
+                updateStatsUI();
+                playGentleTryAgain();
+
+                tileEl.classList.add('wrong', 'disabled');
+                dom.answerSlot.classList.add('wrong-drop');
+                setTimeout(() => dom.answerSlot.classList.remove('wrong-drop'), 450);
+
+                // Highlight counting visual aids to help the student count
+                dom.visualAid.classList.add('highlight-hint');
+            }
+        }
+
+        function updateStatsUI() {
+            dom.starCount.textContent = state.stars;
+            dom.streakCount.textContent = state.streak;
+        }
+
+        function showCelebration() {
+            playVictoryFanfare();
+            launchConfetti(140);
+
+            dom.playArea.style.display = 'none';
+            dom.progressSection.style.display = 'none';
+            dom.celebrationScreen.classList.add('active');
+
+            dom.finalStars.textContent = `${state.stars} ⭐`;
+            dom.finalStreak.textContent = `${state.bestStreak} 🔥`;
+        }
+
+        /* =========================================
+           KEYBOARD ACCESSIBILITY (Play Again Only)
+           ========================================= */
+        document.addEventListener('keydown', (e) => {
+            if (dom.celebrationScreen.classList.contains('active')) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    startNewRound();
+                }
+            }
+        });
+
+        /* =========================================
+           LIGHTWEIGHT CONFETTI PARTICLE SYSTEM
+           ========================================= */
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const ctx = confettiCanvas.getContext('2d');
+        let particles = [];
+        let animId = null;
+
+        function resizeConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfetti);
+        resizeConfetti();
+
+        function launchConfetti(count = 60) {
+            const colors = ['#facc15', '#38bdf8', '#22c55e', '#f472b6', '#a855f7', '#fb923c'];
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: confettiCanvas.width * (0.2 + Math.random() * 0.6),
+                    y: confettiCanvas.height * 0.35,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: -Math.random() * 12 - 4,
+                    size: Math.random() * 9 + 6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    vRot: (Math.random() - 0.5) * 12
+                });
+            }
+            if (!animId) {
+                animateConfetti();
+            }
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            particles.forEach((p) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.35; // gravity
+                p.vx *= 0.99;
+                p.rotation += p.vRot;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+                ctx.restore();
+            });
+
+            particles = particles.filter((p) => p.y < confettiCanvas.height + 30);
+
+            if (particles.length > 0) {
+                animId = requestAnimationFrame(animateConfetti);
+            } else {
+                animId = null;
+            }
+        }
+
+        /* =========================================
+           INITIALIZE GAME ON LOAD
+           ========================================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            startNewRound();
+        });
+    </script>
+</body>
+</html>

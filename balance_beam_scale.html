@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance Beam Scale</title>
+    <style>
+        :root {
+            --bg-top: #fef3c7;
+            --bg-bottom: #dcfce7;
+            --card-bg: #ffffff;
+            --wood-light: #d97706;
+            --wood-dark: #92400e;
+            --accent-amber: #f59e0b;
+            --accent-amber-dark: #b45309;
+            --accent-sky: #0284c7;
+            --success-green: #22c55e;
+            --success-green-dark: #15803d;
+            --error-red: #f87171;
+            --error-red-dark: #dc2626;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --shadow-soft: 0 16px 34px -6px rgba(180, 83, 9, 0.2), 0 8px 14px -6px rgba(0, 0, 0, 0.08);
+            --shadow-btn: 0 7px 0px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(180deg, #fde68a 0%, #fef3c7 52%, #bbf7d0 52%, #86efac 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            padding: 16px;
+        }
+
+        /* Decorative Floating Clouds */
+        .cloud {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.88);
+            border-radius: 50px;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatCloud linear infinite;
+        }
+        .cloud::after, .cloud::before {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+        }
+        .cloud-1 { width: 130px; height: 42px; top: 5%; left: -160px; animation-duration: 38s; }
+        .cloud-1::before { width: 54px; height: 54px; top: -26px; left: 16px; }
+        .cloud-1::after { width: 74px; height: 74px; top: -36px; right: 16px; }
+
+        .cloud-2 { width: 165px; height: 50px; top: 15%; left: -210px; animation-duration: 52s; animation-delay: 8s; }
+        .cloud-2::before { width: 66px; height: 66px; top: -30px; left: 26px; }
+        .cloud-2::after { width: 84px; height: 84px; top: -40px; right: 22px; }
+
+        @keyframes floatCloud {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(100vw + 260px)); }
+        }
+
+        /* =========================================
+           MAIN CENTERED GAME CARD
+           ========================================= */
+        .game-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 840px;
+            background: var(--card-bg);
+            border-radius: 34px;
+            box-shadow: var(--shadow-soft);
+            border: 6px solid #ffffff;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Header Bar */
+        .header-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 10px;
+            border-bottom: 3px dashed #e2e8f0;
+        }
+
+        .mode-selector {
+            display: flex;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 20px;
+            gap: 6px;
+        }
+
+        .mode-btn {
+            border: none;
+            padding: 9px 16px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 800;
+            font-family: inherit;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: var(--accent-amber);
+            color: #451a03;
+            box-shadow: 0 4px 0 var(--accent-amber-dark);
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fef9c3;
+            border: 2px solid #fde047;
+            padding: 7px 14px;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #854d0e;
+        }
+
+        .streak-badge {
+            background: #ffedd5;
+            border-color: #fdba74;
+            color: #9a3412;
+        }
+
+        .icon-btn {
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #e2e8f0;
+            transform: scale(1.06);
+        }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 18px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f59e0b, #10b981, #38bdf8);
+            border-radius: 999px;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .progress-text {
+            font-weight: 800;
+            font-size: 0.98rem;
+            color: var(--text-muted);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* =========================================
+           UNIFIED BALANCE SCALE ARENA
+           ========================================= */
+        .scale-arena {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+            border: 4px solid #f59e0b;
+            border-radius: 30px;
+            padding: 16px 20px;
+            position: relative;
+        }
+
+        .arena-hint {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #92400e;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #fcd34d;
+            padding: 6px 18px;
+            border-radius: 999px;
+            text-align: center;
+        }
+
+        /* Seesaw Stage */
+        .seesaw-stage {
+            position: relative;
+            width: 100%;
+            max-width: 680px;
+            height: 270px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 10px;
+        }
+
+        /* Center Monkey Balancing on Pivot */
+        .monkey-pivot-wrap {
+            position: absolute;
+            bottom: 62px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 112px;
+            height: 118px;
+            z-index: 4;
+            pointer-events: none;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .monkey-pivot-wrap.tilted-left {
+            transform: translateX(-50%) rotate(-10deg);
+        }
+
+        .monkey-pivot-wrap.balanced {
+            transform: translateX(-50%) rotate(0deg) scale(1.08);
+            animation: monkeyCheer 0.7s ease;
+        }
+
+        .monkey-pivot-wrap.wrong-shake {
+            animation: shakeMonkey 0.45s ease;
+        }
+
+        @keyframes monkeyCheer {
+            0%, 100% { transform: translateX(-50%) translateY(0) scale(1.08); }
+            40% { transform: translateX(-50%) translateY(-16px) scale(1.14); }
+            70% { transform: translateX(-50%) translateY(-4px) scale(1.08); }
+        }
+
+        @keyframes shakeMonkey {
+            0%, 100% { transform: translateX(-50%) rotate(-10deg); }
+            25% { transform: translateX(-56%) rotate(-18deg); }
+            75% { transform: translateX(-44%) rotate(-2deg); }
+        }
+
+        /* Wooden Fulcrum Stand */
+        .fulcrum-base {
+            position: relative;
+            width: 110px;
+            height: 76px;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .fulcrum-triangle {
+            width: 0;
+            height: 0;
+            border-left: 44px solid transparent;
+            border-right: 44px solid transparent;
+            border-bottom: 64px solid #b45309;
+            filter: drop-shadow(0 4px 0 #78350f);
+        }
+
+        .fulcrum-foot {
+            width: 124px;
+            height: 14px;
+            background: #78350f;
+            border-radius: 999px;
+        }
+
+        /* Rotating Seesaw Beam */
+        .seesaw-beam {
+            position: absolute;
+            bottom: 66px;
+            width: 92%;
+            max-width: 600px;
+            height: 18px;
+            background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
+            border: 3px solid #78350f;
+            border-radius: 999px;
+            z-index: 5;
+            transform-origin: center center;
+            transform: rotate(-11deg);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.16);
+        }
+
+        .seesaw-beam.balanced {
+            transform: rotate(0deg);
+        }
+
+        .seesaw-beam.overweight {
+            transform: rotate(10deg);
+        }
+
+        /* Center Pivot Pin */
+        .beam-pin {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background: #fde047;
+            border: 4px solid #78350f;
+            border-radius: 50%;
+            z-index: 6;
+        }
+
+        /* Left & Right Pan Platforms Sitting on Beam Ends */
+        .pan-platform {
+            position: absolute;
+            bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pan-left {
+            left: 14px;
+        }
+
+        .pan-right {
+            right: 14px;
+        }
+
+        .pan-weights-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 8px;
+            min-height: 76px;
+        }
+
+        .pan-tray {
+            width: clamp(135px, 28vw, 195px);
+            height: 14px;
+            background: #475569;
+            border: 3px solid #1e293b;
+            border-radius: 10px;
+        }
+
+        /* Iron Kettlebell Weight Block */
+        .weight-block {
+            position: relative;
+            width: clamp(58px, 12vw, 72px);
+            height: clamp(64px, 13vw, 76px);
+            background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+            border: 3px solid #94a3b8;
+            box-shadow: 0 5px 0 #0f172a;
+            border-radius: 16px 16px 12px 12px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.5rem, 3.8vw, 2rem);
+            font-weight: 900;
+            margin-top: 10px;
+        }
+
+        /* Kettlebell Handle Ring on Top */
+        .weight-block::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 12px;
+            border: 4px solid #64748b;
+            border-bottom: none;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .weight-block.blue-weight {
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            border-color: #bae6fd;
+            box-shadow: 0 5px 0 #0369a1;
+        }
+        .weight-block.blue-weight::before {
+            border-color: #0284c7;
+        }
+
+        .weight-block.purple-weight {
+            background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%);
+            border-color: #f3e8ff;
+            box-shadow: 0 5px 0 #6b21a8;
+        }
+        .weight-block.purple-weight::before {
+            border-color: #9333ea;
+        }
+
+        .weight-block.green-weight {
+            background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+            border-color: #dcfce7;
+            box-shadow: 0 5px 0 #15803d;
+        }
+        .weight-block.green-weight::before {
+            border-color: #16a34a;
+        }
+
+        /* Glowing Drop Slot on Right Pan */
+        .drop-weight-slot {
+            width: clamp(62px, 13vw, 76px);
+            height: clamp(66px, 13.5vw, 78px);
+            margin-top: 10px;
+            border: 4px dashed #ea580c;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.9rem;
+            font-weight: 900;
+            color: #ea580c;
+            transition: transform 0.2s, background 0.2s, border-color 0.2s;
+            animation: slotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes slotPulse {
+            0%, 100% { box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15); }
+            50% { box-shadow: 0 0 0 8px rgba(234, 88, 12, 0.3); }
+        }
+
+        .drop-weight-slot.drag-over {
+            transform: scale(1.16);
+            border-style: solid;
+            background: #fef08a;
+            animation: none;
+        }
+
+        /* =========================================
+           4 DRAGGABLE WEIGHT OPTIONS DOCK
+           ========================================= */
+        .weights-dock {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.72);
+            border-top: 2px solid rgba(245, 158, 11, 0.3);
+            border-radius: 22px;
+            padding: 16px 12px 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        @media (min-width: 600px) {
+            .weights-dock {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .weight-slot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 92px;
+        }
+
+        .draggable-weight {
+            position: relative;
+            width: 78px;
+            height: 78px;
+            margin-top: 10px;
+            border-radius: 18px 18px 14px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            cursor: grab;
+            touch-action: none;
+            animation: weightBob 2.6s ease-in-out infinite;
+            transition: transform 0.15s ease;
+        }
+
+        .draggable-weight::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 12px;
+            border: 5px solid currentColor;
+            border-bottom: none;
+            border-radius: 14px 14px 0 0;
+            opacity: 0.75;
+        }
+
+        .weight-slot:nth-child(1) .draggable-weight {
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            border: 4px solid #bae6fd;
+            box-shadow: 0 7px 0 #0369a1;
+            color: #ffffff;
+            animation-delay: 0s;
+        }
+        .weight-slot:nth-child(2) .draggable-weight {
+            background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%);
+            border: 4px solid #f3e8ff;
+            box-shadow: 0 7px 0 #6b21a8;
+            color: #ffffff;
+            animation-delay: 0.4s;
+        }
+        .weight-slot:nth-child(3) .draggable-weight {
+            background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%);
+            border: 4px solid #ffedd5;
+            box-shadow: 0 7px 0 #9a3412;
+            color: #ffffff;
+            animation-delay: 0.8s;
+        }
+        .weight-slot:nth-child(4) .draggable-weight {
+            background: linear-gradient(180deg, #f472b6 0%, #db2777 100%);
+            border: 4px solid #fce7f3;
+            box-shadow: 0 7px 0 #9d174d;
+            color: #ffffff;
+            animation-delay: 1.2s;
+        }
+
+        @keyframes weightBob {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
+        }
+
+        .draggable-weight:hover:not(.dragging):not(.wrong):not(.disabled) {
+            transform: translateY(-7px) scale(1.06);
+            animation-play-state: paused;
+        }
+
+        .draggable-weight.dragging {
+            position: fixed;
+            margin: 0;
+            z-index: 9999;
+            cursor: grabbing;
+            animation: none !important;
+            transform: scale(1.12) rotate(-5deg);
+            box-shadow: 0 20px 32px rgba(0, 0, 0, 0.28);
+            pointer-events: none;
+        }
+
+        .draggable-weight.wrong {
+            background: #fee2e2 !important;
+            border-color: var(--error-red) !important;
+            box-shadow: 0 4px 0 var(--error-red) !important;
+            color: var(--error-red-dark) !important;
+            opacity: 0.45;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        .draggable-weight.disabled {
+            pointer-events: none;
+        }
+
+        .draggable-weight.snap-wobble {
+            animation: shakeHorizontal 0.4s ease !important;
+        }
+
+        @keyframes shakeHorizontal {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* Celebration Trophy Screen */
+        .celebration-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            padding: 24px 12px;
+        }
+
+        .celebration-screen.active {
+            display: flex;
+        }
+
+        .trophy-icon {
+            font-size: 6rem;
+            filter: drop-shadow(0 10px 15px rgba(234, 179, 8, 0.4));
+            animation: trophyFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes trophyFloat {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        .celebration-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--wood-dark);
+        }
+
+        .celebration-stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .final-stat-box {
+            background: #fffbeb;
+            border: 3px solid #fde68a;
+            border-radius: 20px;
+            padding: 16px 24px;
+            min-width: 140px;
+        }
+
+        .final-stat-val {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent-amber-dark);
+        }
+
+        .final-stat-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .play-again-btn {
+            background: var(--success-green);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 18px 40px;
+            font-size: 1.45rem;
+            font-weight: 900;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: var(--shadow-btn) var(--success-green-dark);
+            transition: all 0.15s ease;
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-3px);
+            background: #16a34a;
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Decorative Clouds -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+
+    <!-- Confetti Overlay -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- MAIN CENTERED GAME CARD -->
+    <main class="game-container">
+
+        <!-- Header Bar -->
+        <header class="header-bar">
+            <div class="mode-selector" role="group" aria-label="Grade Level">
+                <button class="mode-btn active" id="btn-grade1" onclick="setGrade(1)">🌟 Grade 1</button>
+                <button class="mode-btn" id="btn-grade2" onclick="setGrade(2)">🚀 Grade 2</button>
+            </div>
+
+            <div class="controls-group">
+                <div class="stat-badge" title="Stars">
+                    <span>⭐</span>
+                    <span id="star-count">0</span>
+                </div>
+                <div class="stat-badge streak-badge" title="Streak">
+                    <span>🔥</span>
+                    <span id="streak-count">0</span>
+                </div>
+                <button class="icon-btn" id="mute-btn" onclick="toggleMute()" title="Sound">
+                    🔊
+                </button>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="progress-wrapper" id="progress-section">
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text">1 / 10</div>
+        </div>
+
+        <!-- Active Gameplay Section -->
+        <section id="play-area" style="display: flex; flex-direction: column; gap: 16px;">
+
+            <!-- Unified Balance Beam Arena -->
+            <div class="scale-arena">
+                <div class="arena-hint">Drag the right weight to balance the monkey's scale! ⚖️</div>
+
+                <div class="seesaw-stage">
+                    <!-- Cute Balancing Monkey SVG on Center Pivot -->
+                    <div class="monkey-pivot-wrap tilted-left" id="monkey-wrap">
+                        <svg viewBox="0 0 140 145" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Ears -->
+                            <circle cx="28" cy="56" r="16" fill="#92400e" stroke="#451a03" stroke-width="4"/>
+                            <circle cx="28" cy="56" r="9" fill="#fde68a"/>
+                            <circle cx="112" cy="56" r="16" fill="#92400e" stroke="#451a03" stroke-width="4"/>
+                            <circle cx="112" cy="56" r="9" fill="#fde68a"/>
+                            <!-- Balancing Arms -->
+                            <path d="M 38 98 Q 10 82 6 66" fill="none" stroke="#92400e" stroke-width="11" stroke-linecap="round"/>
+                            <path d="M 102 98 Q 130 82 134 66" fill="none" stroke="#92400e" stroke-width="11" stroke-linecap="round"/>
+                            <!-- Body -->
+                            <ellipse cx="70" cy="112" rx="34" ry="28" fill="#92400e" stroke="#451a03" stroke-width="4"/>
+                            <ellipse cx="70" cy="114" rx="21" ry="18" fill="#fde68a"/>
+                            <!-- Head -->
+                            <circle cx="70" cy="56" r="36" fill="#92400e" stroke="#451a03" stroke-width="4"/>
+                            <!-- Face Mask -->
+                            <ellipse cx="70" cy="64" rx="26" ry="22" fill="#fde68a"/>
+                            <circle cx="57" cy="48" r="12" fill="#fde68a"/>
+                            <circle cx="83" cy="48" r="12" fill="#fde68a"/>
+                            <!-- Eyes -->
+                            <circle cx="58" cy="50" r="5" fill="#1e293b"/>
+                            <circle cx="60" cy="48" r="2" fill="#ffffff"/>
+                            <circle cx="82" cy="50" r="5" fill="#1e293b"/>
+                            <circle cx="84" cy="48" r="2" fill="#ffffff"/>
+                            <!-- Nose & Smile -->
+                            <ellipse cx="70" cy="61" rx="5" ry="3.5" fill="#78350f"/>
+                            <path d="M 56 70 Q 70 82 84 70" fill="none" stroke="#451a03" stroke-width="4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <!-- Tilting Seesaw Beam with Left & Right Weight Pans -->
+                    <div class="seesaw-beam" id="seesaw-beam">
+                        <!-- Left Pan (Heavier Side) -->
+                        <div class="pan-platform pan-left">
+                            <div class="pan-weights-row" id="left-pan-weights">
+                                <!-- Left side weight(s) rendered dynamically -->
+                            </div>
+                            <div class="pan-tray"></div>
+                        </div>
+
+                        <!-- Center Pivot Pin -->
+                        <div class="beam-pin"></div>
+
+                        <!-- Right Pan (Lighter Side + Drop Slot) -->
+                        <div class="pan-platform pan-right">
+                            <div class="pan-weights-row" id="right-pan-weights">
+                                <!-- Right side existing weight + '?' drop zone -->
+                            </div>
+                            <div class="pan-tray"></div>
+                        </div>
+                    </div>
+
+                    <!-- Wooden Fulcrum Base -->
+                    <div class="fulcrum-base">
+                        <div class="fulcrum-triangle"></div>
+                        <div class="fulcrum-foot"></div>
+                    </div>
+                </div>
+
+                <!-- 4 Draggable Weight Options -->
+                <div class="weights-dock" id="weights-dock">
+                    <!-- 4 draggable weight blocks rendered dynamically -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- End-of-Round Celebration Trophy Screen -->
+        <section class="celebration-screen" id="celebration-screen">
+            <div class="trophy-icon">🏆</div>
+            <h1 class="celebration-title">Perfect Balance!</h1>
+
+            <div class="celebration-stats">
+                <div class="final-stat-box">
+                    <div class="final-stat-val" id="final-stars">10 ⭐</div>
+                    <div class="final-stat-label">Stars</div>
+                </div>
+                <div class="final-stat-box">
+                    <div class="final-stat-val" id="final-streak">5 🔥</div>
+                    <div class="final-stat-label">Streak</div>
+                </div>
+            </div>
+
+            <button class="play-again-btn" onclick="startNewRound()">
+                Play Again! ⚖️
+            </button>
+        </section>
+
+    </main>
+
+    <script>
+        /* =========================================
+           GAME STATE & CONFIGURATION
+           ========================================= */
+        const state = {
+            grade: 1,
+            stars: 0,
+            streak: 0,
+            bestStreak: 0,
+            questionIndex: 0,
+            totalQuestions: 10,
+            leftWeights: [7],
+            rightFixedWeights: [3],
+            missingWeight: 4,
+            isSolved: false,
+            isMuted: false
+        };
+
+        const dom = {
+            btnGrade1: document.getElementById('btn-grade1'),
+            btnGrade2: document.getElementById('btn-grade2'),
+            starCount: document.getElementById('star-count'),
+            streakCount: document.getElementById('streak-count'),
+            muteBtn: document.getElementById('mute-btn'),
+            progressSection: document.getElementById('progress-section'),
+            progressFill: document.getElementById('progress-fill'),
+            progressText: document.getElementById('progress-text'),
+            playArea: document.getElementById('play-area'),
+            monkeyWrap: document.getElementById('monkey-wrap'),
+            seesawBeam: document.getElementById('seesaw-beam'),
+            leftPanWeights: document.getElementById('left-pan-weights'),
+            rightPanWeights: document.getElementById('right-pan-weights'),
+            weightsDock: document.getElementById('weights-dock'),
+            celebrationScreen: document.getElementById('celebration-screen'),
+            finalStars: document.getElementById('final-stars'),
+            finalStreak: document.getElementById('final-streak')
+        };
+
+        /* =========================================
+           WEB AUDIO SYNTHESIZER (NO EXTERNAL FILES)
+           ========================================= */
+        let audioCtx = null;
+
+        function ensureAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.15, delay = 0, volume = 0.2) {
+            if (state.isMuted) return;
+            ensureAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime + delay;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.exponentialRampToValueAtTime(volume, now + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + duration + 0.02);
+        }
+
+        function playPickupSound() {
+            playTone(420, 'sine', 0.09, 0, 0.15);
+            playTone(560, 'sine', 0.1, 0.04, 0.15);
+        }
+
+        function playBalanceChime() {
+            playTone(523.25, 'triangle', 0.16, 0, 0.24);
+            playTone(659.25, 'triangle', 0.16, 0.09, 0.24);
+            playTone(783.99, 'triangle', 0.16, 0.18, 0.24);
+            playTone(1046.50, 'triangle', 0.34, 0.27, 0.28);
+        }
+
+        function playTipBuzz() {
+            playTone(230, 'sawtooth', 0.16, 0, 0.15);
+            playTone(175, 'sawtooth', 0.22, 0.12, 0.15);
+        }
+
+        function playVictoryFanfare() {
+            const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+            const times = [0, 0.12, 0.24, 0.36, 0.54, 0.68];
+            notes.forEach((n, i) => playTone(n, 'triangle', 0.25, times[i], 0.25));
+        }
+
+        function toggleMute() {
+            state.isMuted = !state.isMuted;
+            dom.muteBtn.textContent = state.isMuted ? '🔇' : '🔊';
+            if (!state.isMuted) playPickupSound();
+        }
+
+        /* =========================================
+           GRADE & BALANCE EQUATION GENERATION
+           ========================================= */
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function setGrade(gradeLevel) {
+            state.grade = gradeLevel;
+            dom.btnGrade1.classList.toggle('active', gradeLevel === 1);
+            dom.btnGrade2.classList.toggle('active', gradeLevel === 2);
+            playPickupSound();
+            startNewRound();
+        }
+
+        function startNewRound() {
+            state.questionIndex = 0;
+            state.streak = 0;
+            updateStatsUI();
+            dom.celebrationScreen.classList.remove('active');
+            dom.playArea.style.display = 'flex';
+            dom.progressSection.style.display = 'flex';
+            nextQuestion();
+        }
+
+        function generateBalanceProblem() {
+            if (state.grade === 1) {
+                // Grade 1: Single number on left (e.g., [8] = [5] + [?]) within 10
+                const total = randInt(4, 10);
+                const rightKnown = randInt(1, total - 1);
+                const missing = total - rightKnown;
+                return {
+                    leftWeights: [total],
+                    rightFixedWeights: [rightKnown],
+                    missingWeight: missing
+                };
+            } else {
+                // Grade 2: Equivalent expressions (e.g., [6] + [5] = [7] + [?]) up to 20
+                const total = randInt(9, 20);
+                const leftA = randInt(3, total - 3);
+                const leftB = total - leftA;
+                let rightKnown = randInt(2, total - 2);
+                if (rightKnown === leftA || rightKnown === leftB) {
+                    rightKnown = rightKnown > 2 ? rightKnown - 1 : rightKnown + 1;
+                }
+                const missing = total - rightKnown;
+                return {
+                    leftWeights: [leftA, leftB],
+                    rightFixedWeights: [rightKnown],
+                    missingWeight: missing
+                };
+            }
+        }
+
+        function generateWeightOptions(correctMissing) {
+            const choices = new Set([correctMissing]);
+            const maxVal = state.grade === 1 ? 10 : 18;
+            const offsets = [-3, -2, -1, 1, 2, 3, 4];
+
+            while (choices.size < 4) {
+                const offset = offsets[randInt(0, offsets.length - 1)];
+                const candidate = correctMissing + offset;
+                if (candidate >= 1 && candidate <= maxVal && candidate !== correctMissing) {
+                    choices.add(candidate);
+                }
+            }
+
+            const arr = Array.from(choices);
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function nextQuestion() {
+            if (state.questionIndex >= state.totalQuestions) {
+                showCelebration();
+                return;
+            }
+
+            state.isSolved = false;
+            const problem = generateBalanceProblem();
+            state.leftWeights = problem.leftWeights;
+            state.rightFixedWeights = problem.rightFixedWeights;
+            state.missingWeight = problem.missingWeight;
+
+            // Reset seesaw tilt to left-heavy
+            dom.seesawBeam.className = 'seesaw-beam';
+            dom.monkeyWrap.className = 'monkey-pivot-wrap tilted-left';
+
+            // Update progress bar
+            const pct = (state.questionIndex / state.totalQuestions) * 100;
+            dom.progressFill.style.width = `${pct}%`;
+            dom.progressText.textContent = `${state.questionIndex + 1} / ${state.totalQuestions}`;
+
+            renderPans();
+            renderWeightsDock();
+        }
+
+        function renderPans() {
+            // Left Pan
+            dom.leftPanWeights.innerHTML = '';
+            state.leftWeights.forEach((val, idx) => {
+                const block = document.createElement('div');
+                block.className = idx === 0 ? 'weight-block blue-weight' : 'weight-block purple-weight';
+                block.textContent = val;
+                dom.leftPanWeights.appendChild(block);
+            });
+
+            // Right Pan
+            dom.rightPanWeights.innerHTML = '';
+            state.rightFixedWeights.forEach((val) => {
+                const block = document.createElement('div');
+                block.className = 'weight-block blue-weight';
+                block.textContent = val;
+                dom.rightPanWeights.appendChild(block);
+            });
+
+            const dropSlot = document.createElement('div');
+            dropSlot.className = 'drop-weight-slot';
+            dropSlot.id = 'drop-weight-slot';
+            dropSlot.textContent = '?';
+            dom.rightPanWeights.appendChild(dropSlot);
+        }
+
+        function renderWeightsDock() {
+            dom.weightsDock.innerHTML = '';
+            const options = generateWeightOptions(state.missingWeight);
+
+            options.forEach((val) => {
+                const slot = document.createElement('div');
+                slot.className = 'weight-slot';
+
+                const weightEl = document.createElement('div');
+                weightEl.className = 'draggable-weight';
+                weightEl.textContent = val;
+
+                setupWeightDrag(weightEl, val);
+                slot.appendChild(weightEl);
+                dom.weightsDock.appendChild(slot);
+            });
+        }
+
+        /* =========================================
+           POINTER DRAG & DROP WEIGHT TO RIGHT PAN
+           ========================================= */
+        function isOverRightPan(weightRect) {
+            const dropSlot = document.getElementById('drop-weight-slot');
+            if (!dropSlot) return false;
+            const targetRect = dropSlot.getBoundingClientRect();
+            const pad = 24;
+            return !(
+                weightRect.right < targetRect.left - pad ||
+                weightRect.left > targetRect.right + pad ||
+                weightRect.bottom < targetRect.top - pad ||
+                weightRect.top > targetRect.bottom + pad
+            );
+        }
+
+        function setupWeightDrag(weightEl, val) {
+            let isDragging = false;
+            let hasMoved = false;
+            let startX = 0;
+            let startY = 0;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            const onPointerDown = (e) => {
+                if (state.isSolved || weightEl.classList.contains('wrong') || weightEl.classList.contains('disabled')) {
+                    return;
+                }
+                e.preventDefault();
+                ensureAudio();
+
+                const rect = weightEl.getBoundingClientRect();
+                isDragging = true;
+                hasMoved = false;
+                startX = e.clientX;
+                startY = e.clientY;
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+
+                weightEl.setPointerCapture(e.pointerId);
+                weightEl.addEventListener('pointermove', onPointerMove);
+                weightEl.addEventListener('pointerup', onPointerUp);
+                weightEl.addEventListener('pointercancel', onPointerUp);
+            };
+
+            const onPointerMove = (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                // Require deliberate drag (> 8px) so simple clicks never submit
+                if (!hasMoved && Math.hypot(dx, dy) > 8) {
+                    hasMoved = true;
+                    const rect = weightEl.getBoundingClientRect();
+                    weightEl.style.width = `${rect.width}px`;
+                    weightEl.style.height = `${rect.height}px`;
+                    weightEl.classList.add('dragging');
+                    playPickupSound();
+                }
+
+                if (hasMoved) {
+                    weightEl.style.left = `${e.clientX - offsetX}px`;
+                    weightEl.style.top = `${e.clientY - offsetY}px`;
+
+                    const dropSlot = document.getElementById('drop-weight-slot');
+                    if (dropSlot) {
+                        if (isOverRightPan(weightEl.getBoundingClientRect())) {
+                            dropSlot.classList.add('drag-over');
+                        } else {
+                            dropSlot.classList.remove('drag-over');
+                        }
+                    }
+                }
+            };
+
+            const onPointerUp = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                weightEl.removeEventListener('pointermove', onPointerMove);
+                weightEl.removeEventListener('pointerup', onPointerUp);
+                weightEl.removeEventListener('pointercancel', onPointerUp);
+
+                const droppedInPan = hasMoved && isOverRightPan(weightEl.getBoundingClientRect());
+                const dropSlot = document.getElementById('drop-weight-slot');
+                if (dropSlot) dropSlot.classList.remove('drag-over');
+
+                weightEl.classList.remove('dragging');
+                weightEl.style.width = '';
+                weightEl.style.height = '';
+                weightEl.style.left = '';
+                weightEl.style.top = '';
+
+                if (droppedInPan) {
+                    evaluateWeight(val, weightEl);
+                } else {
+                    weightEl.classList.remove('snap-wobble');
+                    void weightEl.offsetWidth;
+                    weightEl.classList.add('snap-wobble');
+                    setTimeout(() => weightEl.classList.remove('snap-wobble'), 420);
+                }
+            };
+
+            weightEl.addEventListener('pointerdown', onPointerDown);
+        }
+
+        /* =========================================
+           WEIGHT EVALUATION & SEESAW PHYSICS ANIMATION
+           ========================================= */
+        function evaluateWeight(selectedVal, weightEl) {
+            if (state.isSolved) return;
+
+            if (selectedVal === state.missingWeight) {
+                state.isSolved = true;
+                state.stars += 1;
+                state.streak += 1;
+                if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+                updateStatsUI();
+
+                playBalanceChime();
+                launchConfetti(60);
+
+                // Replace '?' slot with solid green balanced weight
+                const dropSlot = document.getElementById('drop-weight-slot');
+                if (dropSlot) {
+                    const solvedBlock = document.createElement('div');
+                    solvedBlock.className = 'weight-block green-weight';
+                    solvedBlock.textContent = selectedVal;
+                    dropSlot.replaceWith(solvedBlock);
+                }
+
+                // Level out the seesaw beam and make the monkey cheer!
+                dom.seesawBeam.classList.add('balanced');
+                dom.monkeyWrap.className = 'monkey-pivot-wrap balanced';
+
+                document.querySelectorAll('.draggable-weight').forEach((w) => w.classList.add('disabled'));
+
+                state.questionIndex += 1;
+                const pct = (state.questionIndex / state.totalQuestions) * 100;
+                dom.progressFill.style.width = `${pct}%`;
+
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1450);
+            } else {
+                // Wrong weight: tip seesaw briefly and disable that weight
+                state.streak = 0;
+                updateStatsUI();
+                playTipBuzz();
+
+                weightEl.classList.add('wrong', 'disabled');
+
+                if (selectedVal > state.missingWeight) {
+                    // Too heavy: tip right briefly
+                    dom.seesawBeam.classList.add('overweight');
+                    setTimeout(() => dom.seesawBeam.classList.remove('overweight'), 550);
+                }
+
+                dom.monkeyWrap.classList.remove('wrong-shake');
+                void dom.monkeyWrap.offsetWidth;
+                dom.monkeyWrap.classList.add('wrong-shake');
+            }
+        }
+
+        function updateStatsUI() {
+            dom.starCount.textContent = state.stars;
+            dom.streakCount.textContent = state.streak;
+        }
+
+        function showCelebration() {
+            playVictoryFanfare();
+            launchConfetti(140);
+
+            dom.playArea.style.display = 'none';
+            dom.progressSection.style.display = 'none';
+            dom.celebrationScreen.classList.add('active');
+
+            dom.finalStars.textContent = `${state.stars} ⭐`;
+            dom.finalStreak.textContent = `${state.bestStreak} 🔥`;
+        }
+
+        /* =========================================
+           CONFETTI PARTICLE SYSTEM
+           ========================================= */
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const ctx = confettiCanvas.getContext('2d');
+        let particles = [];
+        let animId = null;
+
+        function resizeConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfetti);
+        resizeConfetti();
+
+        function launchConfetti(count = 60) {
+            const colors = ['#facc15', '#38bdf8', '#22c55e', '#f472b6', '#a855f7', '#fb923c'];
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: confettiCanvas.width * (0.2 + Math.random() * 0.6),
+                    y: confettiCanvas.height * 0.35,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: -Math.random() * 12 - 4,
+                    size: Math.random() * 9 + 6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    vRot: (Math.random() - 0.5) * 12
+                });
+            }
+            if (!animId) animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            particles.forEach((p) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.35;
+                p.vx *= 0.99;
+                p.rotation += p.vRot;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+                ctx.restore();
+            });
+
+            particles = particles.filter((p) => p.y < confettiCanvas.height + 30);
+            if (particles.length > 0) {
+                animId = requestAnimationFrame(animateConfetti);
+            } else {
+                animId = null;
+            }
+        }
+
+        /* =========================================
+           INITIALIZE GAME ON LOAD
+           ========================================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            startNewRound();
+        });
+    </script>
+</body>
+</html>

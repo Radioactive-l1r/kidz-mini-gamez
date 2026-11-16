@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocket Place-Value Builder</title>
+    <style>
+        :root {
+            --bg-space-top: #090d16;
+            --bg-space-bottom: #1e1b4b;
+            --card-bg: #1e293b;
+            --accent-cyan: #38bdf8;
+            --accent-cyan-dark: #0284c7;
+            --accent-gold: #facc15;
+            --accent-gold-dark: #ca8a04;
+            --success-green: #22c55e;
+            --success-green-dark: #15803d;
+            --error-red: #f87171;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --shadow-soft: 0 18px 36px -6px rgba(0, 0, 0, 0.55);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f172a 60%, #090d16 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            overflow-x: hidden;
+            padding: 16px;
+        }
+
+        .star-field {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(2px 2px at 15% 25%, #ffffff, transparent),
+                radial-gradient(2px 2px at 40% 12%, #bae6fd, transparent),
+                radial-gradient(3px 3px at 75% 18%, #fde047, transparent),
+                radial-gradient(2px 2px at 88% 42%, #ffffff, transparent),
+                radial-gradient(2px 2px at 22% 72%, #c084fc, transparent),
+                radial-gradient(3px 3px at 65% 80%, #ffffff, transparent);
+            background-size: 400px 400px;
+            opacity: 0.75;
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: 34px;
+            box-shadow: var(--shadow-soft);
+            border: 5px solid #334155;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .header-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 10px;
+            border-bottom: 3px dashed #334155;
+        }
+
+        .mode-selector {
+            display: flex;
+            background: #0f172a;
+            padding: 6px;
+            border-radius: 20px;
+            gap: 6px;
+        }
+
+        .mode-btn {
+            border: none;
+            padding: 9px 16px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 800;
+            font-family: inherit;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: var(--accent-cyan);
+            color: #0f172a;
+            box-shadow: 0 4px 0 var(--accent-cyan-dark);
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(250, 204, 21, 0.15);
+            border: 2px solid #facc15;
+            padding: 7px 14px;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #fde047;
+        }
+
+        .streak-badge {
+            background: rgba(251, 146, 60, 0.15);
+            border-color: #fb923c;
+            color: #fdba74;
+        }
+
+        .icon-btn {
+            background: #0f172a;
+            border: 2px solid #475569;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #334155;
+            transform: scale(1.06);
+        }
+
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 18px;
+            background: #0f172a;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 2px solid #334155;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #38bdf8, #a855f7, #22c55e);
+            border-radius: 999px;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .progress-text {
+            font-weight: 800;
+            font-size: 0.98rem;
+            color: var(--text-muted);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* =========================================
+           ROW 3: UNIFIED ROCKET LAUNCHPAD STAGE
+           ========================================= */
+        .launch-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: radial-gradient(circle at 50% 35%, #1e1b4b 0%, #0f172a 100%);
+            border: 4px solid #38bdf8;
+            border-radius: 30px;
+            padding: 16px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .launch-hint {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #bae6fd;
+            background: rgba(56, 189, 248, 0.14);
+            border: 2px solid rgba(56, 189, 248, 0.35);
+            padding: 6px 18px;
+            border-radius: 999px;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        .rocket-upper-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(18px, 5vw, 48px);
+            width: 100%;
+            min-height: 295px;
+        }
+
+        /* Side Live Fuel Meter Gauge */
+        .fuel-side-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .gauge-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #1e293b;
+            border: 4px solid #38bdf8;
+            box-shadow: 0 7px 0 #0284c7;
+            border-radius: 26px;
+            padding: 14px 22px;
+            min-width: 118px;
+            transition: all 0.25s ease;
+        }
+
+        .gauge-icon {
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+        }
+
+        .gauge-number {
+            font-size: clamp(2.4rem, 6vw, 3.6rem);
+            font-weight: 900;
+            line-height: 1;
+            color: #7dd3fc;
+            letter-spacing: 1px;
+        }
+
+        .gauge-card.matched {
+            border-color: #22c55e;
+            box-shadow: 0 7px 0 #15803d;
+            background: rgba(34, 197, 94, 0.16);
+        }
+
+        .gauge-card.matched .gauge-number {
+            color: #4ade80;
+        }
+
+        .gauge-card.overfill {
+            border-color: #ef4444;
+            box-shadow: 0 7px 0 #b91c1c;
+            animation: shakeHorizontal 0.4s ease;
+        }
+
+        .gauge-card.overfill .gauge-number {
+            color: #f87171;
+        }
+
+        /* =========================================
+           SLEEK VERTICAL ROCKET (TARGET ON HEAD + TANK BODY)
+           ========================================= */
+        .rocket-drop-zone {
+            position: relative;
+            width: 210px;
+            height: 295px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s ease;
+        }
+
+        .rocket-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: rocketHover 3s ease-in-out infinite;
+        }
+
+        .rocket-wrapper.blast-off {
+            animation: rocketLaunch 1.15s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+        }
+
+        @keyframes rocketHover {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes rocketLaunch {
+            0% { transform: translateY(0) scale(1); }
+            20% { transform: translateY(10px) scale(0.97); }
+            100% { transform: translateY(-560px) scale(1.12); opacity: 0; }
+        }
+
+        /* Vertical Rocket Head / Nose Cone with Target Number */
+        .rocket-head {
+            position: relative;
+            width: 116px;
+            height: 92px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 3;
+            filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+        }
+
+        .rocket-head-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .rocket-head-number {
+            position: relative;
+            z-index: 4;
+            margin-bottom: 10px;
+            background: #0f172a;
+            border: 3px solid #facc15;
+            color: #fde047;
+            font-size: 1.75rem;
+            font-weight: 900;
+            line-height: 1;
+            padding: 5px 14px;
+            border-radius: 999px;
+            box-shadow: 0 3px 0 #ca8a04;
+        }
+
+        /* Vertical Cylindrical Rocket Fuselage & Fuel Tank */
+        .rocket-body {
+            position: relative;
+            width: 116px;
+            height: 158px;
+            background: linear-gradient(90deg, #e2e8f0 0%, #ffffff 35%, #cbd5e1 100%);
+            border-left: 4px solid #94a3b8;
+            border-right: 4px solid #94a3b8;
+            border-bottom: 5px solid #475569;
+            border-radius: 6px 6px 26px 26px;
+            padding: 10px 12px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Glowing Vertical Fuel Tank Window Inside Rocket Body */
+        .rocket-tank {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            border: 4px dashed #38bdf8;
+            border-radius: 18px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .rocket-drop-zone.drag-over .rocket-tank {
+            border-style: solid;
+            border-color: #facc15;
+            transform: scale(1.06);
+            box-shadow: 0 0 0 8px rgba(250, 204, 21, 0.35);
+        }
+
+        .rocket-drop-zone.blast-ready .rocket-tank {
+            border-style: solid;
+            border-color: #22c55e;
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.65);
+        }
+
+        /* Animated Liquid Fuel Fill Inside Tank */
+        .fuel-liquid {
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 60%, #2563eb 100%);
+            transition: height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s;
+            position: relative;
+        }
+
+        .fuel-liquid::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.65);
+        }
+
+        .fuel-liquid.full-green {
+            background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+        }
+
+        .fuel-liquid.overfill-red {
+            background: linear-gradient(180deg, #f87171 0%, #dc2626 100%);
+        }
+
+        /* Tank Level Tick Marks Overlay */
+        .tank-ticks {
+            position: absolute;
+            inset: 8px 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .tank-ticks span {
+            width: 14px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.45);
+            border-radius: 2px;
+        }
+
+        .tank-ticks span:nth-child(even) {
+            width: 9px;
+        }
+
+        /* Swept Side Wings / Fins */
+        .rocket-fin-left, .rocket-fin-right {
+            position: absolute;
+            bottom: 42px;
+            width: 38px;
+            height: 74px;
+            background: linear-gradient(180deg, #fb7185 0%, #e11d48 100%);
+            border: 3px solid #be123c;
+            z-index: 1;
+        }
+        .rocket-fin-left {
+            left: 16px;
+            border-radius: 36px 0 0 12px;
+            transform: skewY(-22deg);
+        }
+        .rocket-fin-right {
+            right: 16px;
+            border-radius: 0 36px 12px 0;
+            transform: skewY(22deg);
+        }
+
+        /* Rocket Thruster Nozzle & Flame */
+        .rocket-thruster {
+            width: 64px;
+            height: 16px;
+            background: linear-gradient(180deg, #64748b, #334155);
+            border-radius: 0 0 14px 14px;
+            z-index: 2;
+        }
+
+        .rocket-flame {
+            width: 42px;
+            height: 34px;
+            background: radial-gradient(circle at top, #fef08a 15%, #f97316 65%, #ef4444 100%);
+            border-radius: 50% 50% 50% 50% / 20% 20% 80% 80%;
+            margin-top: -2px;
+            opacity: 0;
+            transform: scaleY(0.5);
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .rocket-wrapper.blast-off .rocket-flame {
+            opacity: 1;
+            transform: scaleY(2.1) scaleX(1.35);
+        }
+
+        /* =========================================
+           4 FUEL TANKS DOCK (INSIDE LAUNCHPAD BORDER)
+           ========================================= */
+        .fuel-dock {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.65);
+            border-top: 2px solid rgba(56, 189, 248, 0.25);
+            border-radius: 22px;
+            padding: 14px 10px 8px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        @media (min-width: 640px) {
+            .fuel-dock {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .fuel-pod-slot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 106px;
+            position: relative;
+        }
+
+        /* Draggable Fuel Tank / Canister Shape */
+        .fuel-pod {
+            position: relative;
+            width: 86px;
+            height: 92px;
+            margin-top: 8px;
+            border-radius: 14px 24px 14px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            touch-action: none;
+            font-weight: 900;
+            animation: idleBob 2.6s ease-in-out infinite;
+            transition: transform 0.15s ease;
+        }
+
+        /* Fuel Tank Screw Cap on Top-Left */
+        .fuel-pod::before {
+            content: '';
+            position: absolute;
+            top: -11px;
+            left: 14px;
+            width: 22px;
+            height: 11px;
+            background: #94a3b8;
+            border: 3px solid #475569;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+        }
+
+        /* Fuel Tank Carry Handle Cutout on Top-Right */
+        .fuel-pod::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 20px;
+            height: 10px;
+            background: #0f172a;
+            border-radius: 6px;
+            opacity: 0.75;
+        }
+
+        .fuel-pod-slot:nth-child(1) .fuel-pod,
+        .fuel-pod.pod-style-0 {
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            border: 4px solid #bae6fd;
+            box-shadow: 0 7px 0 #0369a1;
+            color: #ffffff;
+            animation-delay: 0s;
+        }
+
+        .fuel-pod-slot:nth-child(2) .fuel-pod,
+        .fuel-pod.pod-style-1 {
+            background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%);
+            border: 4px solid #f3e8ff;
+            box-shadow: 0 7px 0 #6b21a8;
+            color: #ffffff;
+            animation-delay: 0.4s;
+        }
+
+        .fuel-pod-slot:nth-child(3) .fuel-pod,
+        .fuel-pod.pod-style-2 {
+            background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%);
+            border: 4px solid #ffedd5;
+            box-shadow: 0 7px 0 #9a3412;
+            color: #ffffff;
+            animation-delay: 0.8s;
+        }
+
+        .fuel-pod-slot:nth-child(4) .fuel-pod,
+        .fuel-pod.pod-style-3 {
+            background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+            border: 4px solid #fef9c3;
+            box-shadow: 0 7px 0 #a16207;
+            color: #422006;
+            animation-delay: 1.2s;
+        }
+
+        .fuel-pod:hover {
+            transform: translateY(-6px) scale(1.06);
+            animation-play-state: paused;
+        }
+
+        /* Recessed X-rib lines on the Fuel Tank body */
+        .tank-ribs {
+            position: absolute;
+            inset: 24px 10px 10px 10px;
+            border: 2px solid rgba(255, 255, 255, 0.32);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .pod-value {
+            position: relative;
+            z-index: 2;
+            margin-top: 14px;
+            font-size: 1.95rem;
+            line-height: 1;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .fuel-pod.pod-style-3 .pod-value {
+            text-shadow: none;
+        }
+
+        .dragging-clone {
+            position: fixed;
+            margin: 0;
+            z-index: 9999;
+            pointer-events: none;
+            animation: none !important;
+            transform: scale(0.95) rotate(-5deg);
+            box-shadow: 0 18px 28px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Clear Tank Button */
+        .clear-btn {
+            background: #334155;
+            border: 3px solid #64748b;
+            box-shadow: 0 6px 0 #1e293b;
+            color: #f8fafc;
+            border-radius: 22px;
+            width: 68px;
+            height: 60px;
+            font-size: 1.65rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, background 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: #475569;
+            transform: translateY(-2px);
+        }
+
+        .clear-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #1e293b;
+        }
+
+        @keyframes idleBob {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shakeHorizontal {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* Celebration Trophy Screen */
+        .celebration-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            padding: 24px 12px;
+        }
+
+        .celebration-screen.active {
+            display: flex;
+        }
+
+        .trophy-icon {
+            font-size: 6rem;
+            filter: drop-shadow(0 10px 18px rgba(250, 204, 21, 0.45));
+            animation: trophyFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes trophyFloat {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        .celebration-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #fde047;
+        }
+
+        .celebration-stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .final-stat-box {
+            background: #0f172a;
+            border: 3px solid #38bdf8;
+            border-radius: 20px;
+            padding: 16px 24px;
+            min-width: 140px;
+        }
+
+        .final-stat-val {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #7dd3fc;
+        }
+
+        .final-stat-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .play-again-btn {
+            background: #22c55e;
+            color: #052e16;
+            border: none;
+            border-radius: 24px;
+            padding: 18px 40px;
+            font-size: 1.45rem;
+            font-weight: 900;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 7px 0 #15803d;
+            transition: all 0.15s ease;
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-3px);
+            background: #4ade80;
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Twinkling Stars Background -->
+    <div class="star-field"></div>
+
+    <!-- Confetti Overlay -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- MAIN CENTERED GAME CARD -->
+    <main class="game-container">
+
+        <!-- Row 1: Header Bar -->
+        <header class="header-bar">
+            <div class="mode-selector" role="group" aria-label="Grade Level">
+                <button class="mode-btn active" id="btn-grade1" onclick="setGrade(1)">🌟 Grade 1</button>
+                <button class="mode-btn" id="btn-grade2" onclick="setGrade(2)">🚀 Grade 2</button>
+            </div>
+
+            <div class="controls-group">
+                <div class="stat-badge" title="Stars">
+                    <span>⭐</span>
+                    <span id="star-count">0</span>
+                </div>
+                <div class="stat-badge streak-badge" title="Streak">
+                    <span>🔥</span>
+                    <span id="streak-count">0</span>
+                </div>
+                <button class="icon-btn" id="mute-btn" onclick="toggleMute()" title="Sound">
+                    🔊
+                </button>
+            </div>
+        </header>
+
+        <!-- Row 2: Progress Bar -->
+        <div class="progress-wrapper" id="progress-section">
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text">1 / 10</div>
+        </div>
+        <!-- Active Gameplay Area -->
+        <section id="play-area" style="display: flex; flex-direction: column; gap: 16px;">
+
+            <!-- Unified Launchpad Stage: Rocket + Gauge + 4 Fuel Tanks -->
+            <div class="launch-stage">
+
+                <div class="launch-hint">Drag fuel tanks into the rocket to match the top number! 🚀</div>
+
+                <div class="rocket-upper-row">
+                    <!-- Center Sleek Vertical Rocket with Target on Head & Fuel Tank Body -->
+                    <div class="rocket-drop-zone" id="rocket-drop-zone">
+                        <div class="rocket-wrapper" id="rocket-wrapper">
+                            <!-- Pointed Rocket Nose Cone with Target Number -->
+                            <div class="rocket-head">
+                                <svg class="rocket-head-svg" viewBox="0 0 116 92" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M 58 3 C 86 30, 112 62, 114 92 L 2 92 C 4 62, 30 30, 58 3 Z" fill="#f43f5e" stroke="#be123c" stroke-width="4" stroke-linejoin="round"/>
+                                    <path d="M 58 10 C 44 32, 32 58, 30 88 L 14 88 C 16 60, 36 32, 58 10 Z" fill="#fda4af" opacity="0.45"/>
+                                </svg>
+                                <div class="rocket-head-number" id="target-num">25</div>
+                            </div>
+
+                            <!-- Swept Side Fins -->
+                            <div class="rocket-fin-left"></div>
+                            <div class="rocket-fin-right"></div>
+
+                            <!-- Vertical Cylindrical Rocket Body with Liquid Fuel Tank -->
+                            <div class="rocket-body">
+                                <div class="rocket-tank" id="rocket-tank">
+                                    <div class="tank-ticks">
+                                        <span></span><span></span><span></span><span></span><span></span>
+                                    </div>
+                                    <div class="fuel-liquid" id="fuel-liquid"></div>
+                                </div>
+                            </div>
+
+                            <!-- Thruster & Flame -->
+                            <div class="rocket-thruster"></div>
+                            <div class="rocket-flame"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side Live Fuel Meter & Reset Button -->
+                    <div class="fuel-side-panel">
+                        <div class="gauge-card" id="fuel-meter-card" aria-label="Current Fuel">
+                            <div class="gauge-icon">⛽</div>
+                            <div class="gauge-number" id="current-num">0</div>
+                        </div>
+
+                        <button class="clear-btn" onclick="clearTank()" title="Empty Tank" aria-label="Empty Tank">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 Draggable Fuel Tanks Inside the Same Launchpad Border -->
+                <div class="fuel-dock" id="fuel-dock">
+                    <!-- Populated dynamically with 4 fuel tank options -->
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- End-of-Round Celebration Trophy Screen -->
+        <section class="celebration-screen" id="celebration-screen">
+            <div class="trophy-icon">🏆</div>
+            <h1 class="celebration-title">Mission Complete!</h1>
+
+            <div class="celebration-stats">
+                <div class="final-stat-box">
+                    <div class="final-stat-val" id="final-stars">10 ⭐</div>
+                    <div class="final-stat-label">Stars</div>
+                </div>
+                <div class="final-stat-box">
+                    <div class="final-stat-val" id="final-streak">5 🔥</div>
+                    <div class="final-stat-label">Streak</div>
+                </div>
+            </div>
+
+            <button class="play-again-btn" onclick="startNewRound()">
+                Launch Again! 🚀
+            </button>
+        </section>
+
+    </main>
+
+    <script>
+        /* =========================================
+           GAME STATE & CONFIGURATION
+           ========================================= */
+        const state = {
+            grade: 1,
+            stars: 0,
+            streak: 0,
+            bestStreak: 0,
+            questionIndex: 0,
+            totalQuestions: 10,
+            targetNum: 25,
+            currentFuel: 0,
+            isLaunching: false,
+            isMuted: false
+        };
+
+        const dom = {
+            btnGrade1: document.getElementById('btn-grade1'),
+            btnGrade2: document.getElementById('btn-grade2'),
+            starCount: document.getElementById('star-count'),
+            streakCount: document.getElementById('streak-count'),
+            muteBtn: document.getElementById('mute-btn'),
+            progressSection: document.getElementById('progress-section'),
+            progressFill: document.getElementById('progress-fill'),
+            progressText: document.getElementById('progress-text'),
+            playArea: document.getElementById('play-area'),
+            targetNum: document.getElementById('target-num'),
+            currentNum: document.getElementById('current-num'),
+            fuelMeterCard: document.getElementById('fuel-meter-card'),
+            rocketDropZone: document.getElementById('rocket-drop-zone'),
+            rocketWrapper: document.getElementById('rocket-wrapper'),
+            rocketTank: document.getElementById('rocket-tank'),
+            fuelLiquid: document.getElementById('fuel-liquid'),
+            fuelDock: document.getElementById('fuel-dock'),
+            celebrationScreen: document.getElementById('celebration-screen'),
+            finalStars: document.getElementById('final-stars'),
+            finalStreak: document.getElementById('final-streak')
+        };
+
+        /* =========================================
+           WEB AUDIO SYNTHESIZER (NO EXTERNAL FILES)
+           ========================================= */
+        let audioCtx = null;
+
+        function ensureAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playLoadFuelSound(val) {
+            if (val >= 10) {
+                playTone(330, 'triangle', 0.12, 0, 0.22);
+                playTone(493.88, 'triangle', 0.16, 0.07, 0.22);
+            } else if (val >= 5) {
+                playTone(440, 'triangle', 0.14, 0, 0.22);
+                playTone(554.37, 'triangle', 0.14, 0.06, 0.2);
+            } else {
+                playTone(659.25, 'sine', 0.12, 0, 0.2);
+            }
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.15, delay = 0, volume = 0.2) {
+            if (state.isMuted) return;
+            ensureAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime + delay;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.exponentialRampToValueAtTime(volume, now + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + duration + 0.02);
+        }
+
+        function playPickupSound() {
+            playTone(480, 'sine', 0.08, 0, 0.14);
+        }
+
+        function playLoadTenSound() {
+            playTone(330, 'triangle', 0.12, 0, 0.22);
+            playTone(493.88, 'triangle', 0.16, 0.07, 0.22);
+        }
+
+        function playLoadOneSound() {
+            playTone(659.25, 'sine', 0.12, 0, 0.2);
+        }
+
+        function playRemoveSound() {
+            playTone(320, 'sine', 0.1, 0, 0.15);
+        }
+
+        function playOverfillBuzz() {
+            playTone(190, 'sawtooth', 0.16, 0, 0.15);
+            playTone(150, 'sawtooth', 0.2, 0.12, 0.15);
+        }
+
+        function playBlastOffSound() {
+            playTone(523.25, 'triangle', 0.15, 0, 0.25);
+            playTone(659.25, 'triangle', 0.15, 0.1, 0.25);
+            playTone(783.99, 'triangle', 0.15, 0.2, 0.25);
+            playTone(1046.50, 'triangle', 0.45, 0.3, 0.3);
+
+            // Rocket rumble sweep
+            if (!state.isMuted && audioCtx) {
+                const now = audioCtx.currentTime + 0.15;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(90, now);
+                osc.frequency.exponentialRampToValueAtTime(260, now + 0.95);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 1.02);
+            }
+        }
+
+        function playVictoryFanfare() {
+            const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+            const times = [0, 0.12, 0.24, 0.36, 0.54, 0.68];
+            notes.forEach((n, i) => playTone(n, 'triangle', 0.25, times[i], 0.25));
+        }
+
+        function toggleMute() {
+            state.isMuted = !state.isMuted;
+            dom.muteBtn.textContent = state.isMuted ? '🔇' : '🔊';
+            if (!state.isMuted) playPickupSound();
+        }
+
+        /* =========================================
+           GRADE & TARGET NUMBER GENERATION
+           ========================================= */
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function setGrade(gradeLevel) {
+            state.grade = gradeLevel;
+            dom.btnGrade1.classList.toggle('active', gradeLevel === 1);
+            dom.btnGrade2.classList.toggle('active', gradeLevel === 2);
+            playPickupSound();
+            startNewRound();
+        }
+
+        function startNewRound() {
+            state.questionIndex = 0;
+            state.streak = 0;
+            updateStatsUI();
+            dom.celebrationScreen.classList.remove('active');
+            dom.playArea.style.display = 'flex';
+            dom.progressSection.style.display = 'flex';
+            nextQuestion();
+        }
+
+        function generateTargetNumber() {
+            if (state.grade === 1) {
+                // Grade 1: easy numbers 5 to 20
+                return randInt(5, 20);
+            } else {
+                // Grade 2: numbers 25 to 95
+                return randInt(25, 95);
+            }
+        }
+
+        function getFuelPodOptions() {
+            if (state.grade === 1) {
+                // 4 simple options for Grade 1: +5, +3, +2, +1
+                return [5, 3, 2, 1];
+            } else {
+                // 4 engaging options for Grade 2: +20, +10, +5, +1
+                return [20, 10, 5, 1];
+            }
+        }
+
+        function renderFuelDock() {
+            dom.fuelDock.innerHTML = '';
+            const pods = getFuelPodOptions();
+
+            pods.forEach((val, idx) => {
+                const slot = document.createElement('div');
+                slot.className = 'fuel-pod-slot';
+
+                const pod = document.createElement('div');
+                pod.className = `fuel-pod pod-style-${idx}`;
+                pod.innerHTML = `
+                    <span class="tank-ribs"></span>
+                    <span class="pod-value">${val}</span>
+                `;
+
+                setupFuelSpawner(pod, val);
+                slot.appendChild(pod);
+                dom.fuelDock.appendChild(slot);
+            });
+        }
+
+        function nextQuestion() {
+            if (state.questionIndex >= state.totalQuestions) {
+                showCelebration();
+                return;
+            }
+
+            state.isLaunching = false;
+            state.currentFuel = 0;
+            state.targetNum = generateTargetNumber();
+
+            dom.targetNum.textContent = state.targetNum;
+            dom.rocketWrapper.classList.remove('blast-off');
+            dom.rocketDropZone.classList.remove('blast-ready', 'drag-over');
+            dom.fuelMeterCard.classList.remove('matched', 'overfill');
+            dom.fuelLiquid.className = 'fuel-liquid';
+
+            const pct = (state.questionIndex / state.totalQuestions) * 100;
+            dom.progressFill.style.width = `${pct}%`;
+            dom.progressText.textContent = `${state.questionIndex + 1} / ${state.totalQuestions}`;
+
+            renderFuelDock();
+            renderTank();
+        }
+
+        /* =========================================
+           FUEL TANK LIQUID LEVEL & EVALUATION
+           ========================================= */
+        function renderTank() {
+            const total = state.currentFuel;
+            dom.currentNum.textContent = total;
+
+            // Calculate liquid fill height percentage inside the vertical rocket tank
+            const fillRatio = Math.min(100, Math.round((total / state.targetNum) * 100));
+            dom.fuelLiquid.style.height = `${fillRatio}%`;
+
+            dom.fuelMeterCard.classList.remove('matched', 'overfill');
+            dom.fuelLiquid.classList.remove('full-green', 'overfill-red');
+
+            if (total === state.targetNum && !state.isLaunching) {
+                dom.fuelLiquid.classList.add('full-green');
+                triggerBlastOff();
+            } else if (total > state.targetNum) {
+                dom.fuelLiquid.classList.add('overfill-red');
+                dom.fuelMeterCard.classList.add('overfill');
+                playOverfillBuzz();
+            }
+        }
+
+        function clearTank() {
+            if (state.isLaunching) return;
+            state.currentFuel = 0;
+            playRemoveSound();
+            renderTank();
+        }
+
+        function triggerBlastOff() {
+            state.isLaunching = true;
+            state.stars += 1;
+            state.streak += 1;
+            if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+            updateStatsUI();
+
+            dom.fuelMeterCard.classList.add('matched');
+            dom.rocketDropZone.classList.add('blast-ready');
+            playBlastOffSound();
+            launchConfetti(70);
+
+            // Launch rocket upward after a brief lock-in beat
+            setTimeout(() => {
+                dom.rocketWrapper.classList.add('blast-off');
+            }, 220);
+
+            state.questionIndex += 1;
+            const pct = (state.questionIndex / state.totalQuestions) * 100;
+            dom.progressFill.style.width = `${pct}%`;
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 1450);
+        }
+
+        /* =========================================
+           POINTER DRAG & DROP FROM FUEL DOCK TO TANK
+           ========================================= */
+        function isOverRocketTank(cloneRect) {
+            const tankRect = dom.rocketTank.getBoundingClientRect();
+            const pad = 20;
+            return !(
+                cloneRect.right < tankRect.left - pad ||
+                cloneRect.left > tankRect.right + pad ||
+                cloneRect.bottom < tankRect.top - pad ||
+                cloneRect.top > tankRect.bottom + pad
+            );
+        }
+
+        function setupFuelSpawner(spawnerEl, unitValue) {
+            let isDragging = false;
+            let hasMoved = false;
+            let startX = 0;
+            let startY = 0;
+            let cloneEl = null;
+            let cloneWidth = 0;
+            let cloneHeight = 0;
+
+            const updateClonePosition = (clientX, clientY) => {
+                if (!cloneEl) return;
+                cloneEl.style.left = `${clientX - cloneWidth / 2}px`;
+                cloneEl.style.top = `${clientY - cloneHeight / 2}px`;
+            };
+
+            const onPointerDown = (e) => {
+                if (state.isLaunching) return;
+                e.preventDefault();
+                ensureAudio();
+
+                isDragging = true;
+                hasMoved = false;
+                startX = e.clientX;
+                startY = e.clientY;
+
+                spawnerEl.setPointerCapture(e.pointerId);
+                spawnerEl.addEventListener('pointermove', onPointerMove);
+                spawnerEl.addEventListener('pointerup', onPointerUp);
+                spawnerEl.addEventListener('pointercancel', onPointerUp);
+            };
+
+            const onPointerMove = (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                // Require deliberate drag (> 8px) so clicks never add fuel
+                if (!hasMoved && Math.hypot(dx, dy) > 8) {
+                    hasMoved = true;
+                    const rect = spawnerEl.getBoundingClientRect();
+                    cloneWidth = rect.width;
+                    cloneHeight = rect.height;
+
+                    cloneEl = spawnerEl.cloneNode(true);
+                    cloneEl.removeAttribute('id');
+                    cloneEl.style.width = `${cloneWidth}px`;
+                    cloneEl.style.height = `${cloneHeight}px`;
+                    cloneEl.classList.add('dragging-clone');
+                    document.body.appendChild(cloneEl);
+                    playPickupSound();
+                }
+
+                if (hasMoved && cloneEl) {
+                    updateClonePosition(e.clientX, e.clientY);
+
+                    if (isOverRocketTank(cloneEl.getBoundingClientRect())) {
+                        dom.rocketDropZone.classList.add('drag-over');
+                    } else {
+                        dom.rocketDropZone.classList.remove('drag-over');
+                    }
+                }
+            };
+
+            const onPointerUp = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                spawnerEl.removeEventListener('pointermove', onPointerMove);
+                spawnerEl.removeEventListener('pointerup', onPointerUp);
+                spawnerEl.removeEventListener('pointercancel', onPointerUp);
+
+                dom.rocketDropZone.classList.remove('drag-over');
+
+                if (cloneEl) {
+                    const droppedInTank = hasMoved && isOverRocketTank(cloneEl.getBoundingClientRect());
+                    cloneEl.remove();
+                    cloneEl = null;
+
+                    if (droppedInTank && !state.isLaunching) {
+                        state.currentFuel += unitValue;
+                        playLoadFuelSound(unitValue);
+                        renderTank();
+                    }
+                }
+            };
+
+            spawnerEl.addEventListener('pointerdown', onPointerDown);
+        }
+
+        function updateStatsUI() {
+            dom.starCount.textContent = state.stars;
+            dom.streakCount.textContent = state.streak;
+        }
+
+        function showCelebration() {
+            playVictoryFanfare();
+            launchConfetti(140);
+
+            dom.playArea.style.display = 'none';
+            dom.progressSection.style.display = 'none';
+            dom.celebrationScreen.classList.add('active');
+
+            dom.finalStars.textContent = `${state.stars} ⭐`;
+            dom.finalStreak.textContent = `${state.bestStreak} 🔥`;
+        }
+
+        /* =========================================
+           CONFETTI PARTICLE SYSTEM
+           ========================================= */
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const ctx = confettiCanvas.getContext('2d');
+        let particles = [];
+        let animId = null;
+
+        function resizeConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfetti);
+        resizeConfetti();
+
+        function launchConfetti(count = 60) {
+            const colors = ['#facc15', '#38bdf8', '#22c55e', '#f43f5e', '#a855f7', '#fb923c'];
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: confettiCanvas.width * (0.2 + Math.random() * 0.6),
+                    y: confettiCanvas.height * 0.4,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: -Math.random() * 13 - 4,
+                    size: Math.random() * 9 + 6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    vRot: (Math.random() - 0.5) * 12
+                });
+            }
+            if (!animId) animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            particles.forEach((p) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.35;
+                p.vx *= 0.99;
+                p.rotation += p.vRot;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+                ctx.restore();
+            });
+
+            particles = particles.filter((p) => p.y < confettiCanvas.height + 30);
+            if (particles.length > 0) {
+                animId = requestAnimationFrame(animateConfetti);
+            } else {
+                animId = null;
+            }
+        }
+
+        /* =========================================
+           INITIALIZE GAME ON LOAD
+           ========================================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            startNewRound();
+        });
+    </script>
+</body>
+</html>
