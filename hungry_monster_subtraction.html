@@ -162,6 +162,11 @@
 
         .icon-btn:hover { background: #e2e8f0; transform: scale(1.06); }
 
+        .back-btn {
+            text-decoration: none;
+            color: inherit;
+        }
+
         .progress-wrapper {
             display: flex;
             align-items: center;
@@ -505,22 +510,32 @@
         /* Portrait Mobile */
         @media (max-width: 540px) and (orientation: portrait) {
             body { padding: 8px; }
-            .game-container { padding: 14px 12px; border-radius: 24px; gap: 12px; }
-            .mode-btn { padding: 7px 12px; font-size: 0.9rem; }
-            .stat-badge { padding: 5px 10px; font-size: 0.95rem; }
-            .icon-btn { width: 38px; height: 38px; font-size: 1.15rem; }
-            .equation-board { padding: 12px 10px; gap: 6px; }
-            .eq-card { padding: 8px 12px; min-width: 56px; border-radius: 16px; }
-            .eq-num { font-size: 1.95rem; }
-            .operator { font-size: 1.8rem; }
-            .monster-stage { width: 106px; height: 106px; }
-            .plates-tray { padding: 10px; }
-            .plates-grid { gap: 10px; }
-            .plate-slot { max-width: 132px; }
-            .cookie-plate { padding: 14px; }
-            .cookie-plate::before { inset: 10px; }
-            .cookie-emoji { font-size: 1.35rem; }
-            .cookie-emoji.compact { font-size: 1rem; }
+            .game-container { padding: 12px 10px; border-radius: 24px; gap: 10px; }
+            .header-bar { gap: 6px; padding-bottom: 8px; }
+            .mode-selector { padding: 4px; border-radius: 14px; gap: 4px; }
+            .mode-btn { padding: 6px 10px; font-size: 0.82rem; border-radius: 12px; }
+            .controls-group { gap: 6px; }
+            .stat-badge { padding: 4px 9px; font-size: 0.88rem; border-radius: 14px; }
+            .icon-btn { width: clamp(36px, 5vh, 42px); height: clamp(36px, 5vh, 42px); font-size: 1.05rem; }
+            .progress-wrapper { gap: 8px; }
+            .progress-track { height: 14px; }
+            .progress-text { font-size: 0.85rem; min-width: 52px; }
+            .play-area, .stage-column { gap: 10px; }
+            .play-hint { padding: 4px 12px; font-size: 0.82rem; line-height: 1.25; }
+            .equation-board { padding: 8px 6px; gap: 6px; border-radius: 20px; border-width: 3px; }
+            .eq-card { padding: 6px 8px; min-width: 54px; border-radius: 14px; border-width: 3px; box-shadow: 0 4px 0 #c084fc; }
+            .eq-card.result { box-shadow: 0 4px 0 #0284c7; }
+            .eq-num { font-size: clamp(1.5rem, 4vh, 1.9rem); }
+            .operator { font-size: 1.5rem; }
+            .monster-equation-slot { padding: 6px 8px; border-radius: 20px; border-width: 3px; }
+            .monster-stage { width: clamp(84px, 13vh, 104px); height: clamp(84px, 13vh, 104px); }
+            .plates-tray { padding: 8px; border-radius: 20px; }
+            .plates-grid { gap: 8px; }
+            .plate-slot { max-width: clamp(84px, 14vh, 132px); }
+            .cookie-plate { padding: 12px; }
+            .cookie-plate::before { inset: 8px; }
+            .cookie-emoji { font-size: clamp(1.05rem, 2.6vh, 1.5rem); }
+            .cookie-emoji.compact { font-size: clamp(0.85rem, 2vh, 1.15rem); }
         }
 
         /* =========================================================
@@ -649,6 +664,8 @@
 
     <main class="game-container">
         <header class="header-bar">
+            <a class="icon-btn back-btn" href="index.html" title="Back to Games" aria-label="Back to Games">⬅️</a>
+
             <div class="mode-selector" role="group" aria-label="Grade Level">
                 <button class="mode-btn active" id="btn-grade1" onclick="setGrade(1)">🌟 Grade 1</button>
                 <button class="mode-btn" id="btn-grade2" onclick="setGrade(2)">🚀 Grade 2</button>

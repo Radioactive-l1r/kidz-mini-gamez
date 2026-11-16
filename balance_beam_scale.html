@@ -173,28 +173,11 @@
             transform: scale(1.06);
         }
 
-        /* Mobile Responsive & Rotate Landscape Mode */
-        @media (max-width: 540px) {
-            body { padding: 8px; }
-            .game-container { padding: 14px 12px; border-radius: 24px; gap: 10px; }
-            .mode-btn { padding: 7px 12px; font-size: 0.9rem; }
-            .stat-badge { padding: 5px 10px; font-size: 0.95rem; }
-            .icon-btn { width: 38px; height: 38px; font-size: 1.15rem; }
-            .scale-arena { padding: 12px 10px; gap: 10px; }
-            .seesaw-stage { height: 220px; }
-            .monkey-pivot-wrap { width: 88px; height: 94px; bottom: 52px; }
-            .seesaw-beam { bottom: 56px; width: 96%; height: 14px; }
-            .pan-left { left: 6px; }
-            .pan-right { right: 6px; }
-            .pan-tray { width: 112px; height: 11px; }
-            .weight-block { width: 48px; height: 52px; font-size: 1.3rem; }
-            .drop-weight-slot { width: 50px; height: 54px; font-size: 1.45rem; }
-            .fulcrum-base { width: 90px; height: 64px; }
-            .fulcrum-triangle { border-left-width: 36px; border-right-width: 36px; border-bottom-width: 52px; }
-            .fulcrum-foot { width: 100px; height: 12px; }
-            .weight-slot { height: 78px; }
-            .draggable-weight { width: 66px; height: 66px; font-size: 1.7rem; }
+        .back-btn {
+            text-decoration: none;
+            color: inherit;
         }
+
 
         body.force-landscape { padding: 0; overflow: hidden; }
         body.force-landscape .game-container {
@@ -213,76 +196,6 @@
             gap: 6px;
         }
 
-        /* No-Scroll Side-by-Side Single-Screen Landscape Layout (Native & Forced Rotate) */
-        @media (orientation: landscape) and (max-height: 600px) {
-            html, body { height: 100dvh; max-height: 100dvh; min-height: 0; padding: 4px 8px; overflow: hidden; }
-            .game-container {
-                height: 100%;
-                max-height: 100%;
-                max-width: 100%;
-                padding: 6px 12px;
-                gap: 5px;
-                border-radius: 18px;
-                border-width: 3px;
-                justify-content: space-between;
-            }
-            .header-bar { padding-bottom: 4px; gap: 6px; flex-wrap: nowrap; }
-            .mode-selector { padding: 3px; border-radius: 14px; }
-            .mode-btn { padding: 4px 10px; font-size: 0.82rem; border-radius: 11px; }
-            .stat-badge { padding: 3px 8px; font-size: 0.85rem; border-radius: 12px; }
-            .icon-btn { width: 32px; height: 32px; font-size: 0.95rem; }
-            .progress-wrapper { gap: 8px; }
-            .progress-track { height: 10px; }
-            .progress-text { font-size: 0.82rem; min-width: 48px; }
-            #play-area { flex: 1; min-height: 0; gap: 6px !important; }
-            .scale-arena {
-                flex: 1;
-                min-height: 0;
-                display: grid;
-                grid-template-columns: 1fr auto;
-                grid-template-rows: auto 1fr;
-                align-items: center;
-                padding: 6px 10px;
-                gap: 4px 10px;
-                border-radius: 16px;
-                border-width: 3px;
-            }
-            .arena-hint { grid-column: 1 / -1; justify-self: center; padding: 2px 12px; font-size: 0.78rem; }
-            .seesaw-stage { height: 100%; min-height: 0; max-height: 195px; padding-bottom: 2px; }
-            .monkey-pivot-wrap { width: 64px; height: 68px; bottom: 34px; }
-            .seesaw-beam { bottom: 36px; width: 95%; height: 11px; }
-            .pan-left { left: 6px; }
-            .pan-right { right: 6px; }
-            .pan-tray { width: 102px; height: 9px; }
-            .pan-weights-row { min-height: 44px; gap: 4px; }
-            .weight-block { width: 40px; height: 42px; font-size: 1.1rem; margin-top: 6px; border-radius: 10px; }
-            .weight-block::before { top: -8px; width: 16px; height: 8px; border-width: 3px; }
-            .drop-weight-slot { width: 42px; height: 44px; font-size: 1.25rem; margin-top: 6px; border-radius: 11px; border-width: 3px; }
-            .fulcrum-base { width: 70px; height: 44px; }
-            .fulcrum-triangle { border-left-width: 26px; border-right-width: 26px; border-bottom-width: 36px; }
-            .fulcrum-foot { width: 80px; height: 8px; }
-            .weights-dock {
-                width: auto;
-                height: 100%;
-                max-height: 190px;
-                grid-template-columns: repeat(2, 1fr);
-                align-content: center;
-                border-top: none;
-                border-left: 2px solid rgba(245, 158, 11, 0.35);
-                padding: 8px 10px 4px;
-                gap: 8px 10px;
-                border-radius: 14px;
-            }
-            .weight-slot { height: 58px; width: 58px; }
-            .draggable-weight { width: 50px; height: 50px; font-size: 1.35rem; margin-top: 6px; border-radius: 12px; border-width: 3px; box-shadow: 0 4px 0 rgba(0,0,0,0.25); }
-            .draggable-weight::before { top: -8px; width: 20px; height: 8px; border-width: 3px; }
-            .celebration-screen { padding: 8px; gap: 10px; justify-content: center; flex: 1; }
-            .trophy-icon { font-size: 3.5rem; }
-            .celebration-title { font-size: 1.5rem; }
-            .final-stat-box { padding: 8px 16px; min-width: 110px; }
-            .final-stat-val { font-size: 1.4rem; }
-            .play-again-btn { padding: 10px 26px; font-size: 1.15rem; }
-        }
         body.force-landscape .header-bar { padding-bottom: 4px; gap: 6px; flex-wrap: nowrap; }
         body.force-landscape .mode-selector { padding: 3px; border-radius: 14px; }
         body.force-landscape .mode-btn { padding: 4px 10px; font-size: 0.82rem; border-radius: 11px; }
@@ -857,6 +770,108 @@
             pointer-events: none;
             z-index: 100;
         }
+        /* Mobile Responsive & Rotate Landscape Mode */
+        @media (max-width: 540px) {
+            body { padding: 8px; }
+            .game-container { padding: 12px 10px; border-radius: 24px; gap: 10px; }
+            .header-bar { gap: 6px; padding-bottom: 8px; }
+            .mode-selector { padding: 4px; border-radius: 14px; gap: 4px; }
+            .mode-btn { padding: 6px 10px; font-size: 0.82rem; border-radius: 12px; }
+            .controls-group { gap: 6px; }
+            .stat-badge { padding: 4px 9px; font-size: 0.88rem; border-radius: 14px; }
+            .icon-btn { width: clamp(36px, 5vh, 42px); height: clamp(36px, 5vh, 42px); font-size: 1.05rem; }
+            .progress-wrapper { gap: 8px; }
+            .progress-track { height: 14px; }
+            .progress-text { font-size: 0.85rem; min-width: 52px; }
+            .scale-arena { padding: 8px; gap: 8px; border-radius: 20px; border-width: 3px; }
+            .arena-hint { padding: 3px 12px; font-size: 0.82rem; line-height: 1.25; }
+            .seesaw-stage { height: clamp(180px, 29vh, 250px); padding-bottom: 6px; }
+            .monkey-pivot-wrap { width: clamp(64px, 10vh, 84px); height: clamp(70px, 11vh, 92px); bottom: clamp(40px, 7vh, 52px); }
+            .seesaw-beam { bottom: clamp(44px, 7.5vh, 56px); width: 96%; height: 12px; }
+            .pan-left { left: 4px; }
+            .pan-right { right: 4px; }
+            .pan-weights-row { min-height: 52px; gap: 4px; }
+            .pan-tray { width: clamp(92px, 15vh, 112px); height: 10px; }
+            .weight-block { width: 40px; height: 44px; font-size: 1.15rem; }
+            .drop-weight-slot { width: 42px; height: 46px; font-size: 1.25rem; }
+            .fulcrum-base { width: 80px; height: 54px; }
+            .fulcrum-triangle { border-left-width: 30px; border-right-width: 30px; border-bottom-width: 44px; }
+            .fulcrum-foot { width: 90px; height: 10px; }
+            .weights-dock { padding: 8px 8px 6px; gap: 8px; border-radius: 18px; }
+            .weight-slot { height: clamp(64px, 10vh, 84px); }
+            .draggable-weight { width: clamp(54px, 8.5vh, 70px); height: clamp(54px, 8.5vh, 70px); font-size: 1.5rem; }
+        }
+        /* No-Scroll Side-by-Side Single-Screen Landscape Layout (Native & Forced Rotate) */
+        @media (orientation: landscape) and (max-height: 600px) {
+            html, body { height: 100dvh; max-height: 100dvh; min-height: 0; padding: 4px 8px; overflow: hidden; }
+            .game-container {
+                height: 100%;
+                max-height: 100%;
+                max-width: 100%;
+                padding: 6px 12px;
+                gap: 5px;
+                border-radius: 18px;
+                border-width: 3px;
+                justify-content: space-between;
+            }
+            .header-bar { padding-bottom: 4px; gap: 6px; flex-wrap: nowrap; }
+            .mode-selector { padding: 3px; border-radius: 14px; }
+            .mode-btn { padding: 4px 10px; font-size: 0.82rem; border-radius: 11px; }
+            .stat-badge { padding: 3px 8px; font-size: 0.85rem; border-radius: 12px; }
+            .icon-btn { width: 32px; height: 32px; font-size: 0.95rem; }
+            .progress-wrapper { gap: 8px; }
+            .progress-track { height: 10px; }
+            .progress-text { font-size: 0.82rem; min-width: 48px; }
+            #play-area { flex: 1; min-height: 0; gap: 6px !important; }
+            .scale-arena {
+                flex: 1;
+                min-height: 0;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                grid-template-rows: auto 1fr;
+                align-items: center;
+                padding: 6px 10px;
+                gap: 4px 10px;
+                border-radius: 16px;
+                border-width: 3px;
+            }
+            .arena-hint { grid-column: 1 / -1; justify-self: center; padding: 2px 12px; font-size: 0.78rem; }
+            .seesaw-stage { height: 100%; min-height: 0; max-height: 195px; padding-bottom: 2px; }
+            .monkey-pivot-wrap { width: 64px; height: 68px; bottom: 34px; }
+            .seesaw-beam { bottom: 36px; width: 95%; height: 11px; }
+            .pan-left { left: 6px; }
+            .pan-right { right: 6px; }
+            .pan-tray { width: 102px; height: 9px; }
+            .pan-weights-row { min-height: 44px; gap: 4px; }
+            .weight-block { width: 40px; height: 42px; font-size: 1.1rem; margin-top: 6px; border-radius: 10px; }
+            .weight-block::before { top: -8px; width: 16px; height: 8px; border-width: 3px; }
+            .drop-weight-slot { width: 42px; height: 44px; font-size: 1.25rem; margin-top: 6px; border-radius: 11px; border-width: 3px; }
+            .fulcrum-base { width: 70px; height: 44px; }
+            .fulcrum-triangle { border-left-width: 26px; border-right-width: 26px; border-bottom-width: 36px; }
+            .fulcrum-foot { width: 80px; height: 8px; }
+            .weights-dock {
+                width: auto;
+                height: 100%;
+                max-height: 190px;
+                grid-template-columns: repeat(2, 1fr);
+                align-content: center;
+                border-top: none;
+                border-left: 2px solid rgba(245, 158, 11, 0.35);
+                padding: 8px 10px 4px;
+                gap: 8px 10px;
+                border-radius: 14px;
+            }
+            .weight-slot { height: 58px; width: 58px; }
+            .draggable-weight { width: 50px; height: 50px; font-size: 1.35rem; margin-top: 6px; border-radius: 12px; border-width: 3px; box-shadow: 0 4px 0 rgba(0,0,0,0.25); }
+            .draggable-weight::before { top: -8px; width: 20px; height: 8px; border-width: 3px; }
+            .celebration-screen { padding: 8px; gap: 10px; justify-content: center; flex: 1; }
+            .trophy-icon { font-size: 3.5rem; }
+            .celebration-title { font-size: 1.5rem; }
+            .final-stat-box { padding: 8px 16px; min-width: 110px; }
+            .final-stat-val { font-size: 1.4rem; }
+            .play-again-btn { padding: 10px 26px; font-size: 1.15rem; }
+        }
+
     </style>
 </head>
 <body>
@@ -873,6 +888,8 @@
 
         <!-- Header Bar -->
         <header class="header-bar">
+            <a class="icon-btn back-btn" href="index.html" title="Back to Games" aria-label="Back to Games">⬅️</a>
+
             <div class="mode-selector" role="group" aria-label="Grade Level">
                 <button class="mode-btn active" id="btn-grade1" onclick="setGrade(1)">🌟 Grade 1</button>
                 <button class="mode-btn" id="btn-grade2" onclick="setGrade(2)">🚀 Grade 2</button>

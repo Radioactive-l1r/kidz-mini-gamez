@@ -32,7 +32,7 @@
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f172a 60%, #090d16 100%);
-            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -149,30 +149,15 @@
             transition: transform 0.15s ease, background 0.2s;
         }
 
+        .back-btn {
+            color: var(--text-light);
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
         .icon-btn:hover {
             background: #334155;
             transform: scale(1.06);
-        }
-
-        /* Mobile Responsive & Rotate Landscape Mode */
-        @media (max-width: 540px) {
-            body { padding: 8px; }
-            .game-container { padding: 14px 12px; border-radius: 24px; gap: 10px; }
-            .mode-btn { padding: 7px 12px; font-size: 0.9rem; }
-            .stat-badge { padding: 5px 10px; font-size: 0.95rem; }
-            .icon-btn { width: 38px; height: 38px; font-size: 1.15rem; }
-            .launch-stage { padding: 12px 10px; gap: 10px; }
-            .rocket-upper-row { min-height: 230px; gap: 16px; }
-            .rocket-drop-zone { width: 170px; height: 235px; }
-            .rocket-head { width: 96px; height: 74px; }
-            .rocket-head-number { font-size: 1.45rem; padding: 4px 12px; }
-            .rocket-body { width: 96px; height: 126px; padding: 8px 10px; }
-            .rocket-fin-left, .rocket-fin-right { width: 30px; height: 58px; bottom: 32px; }
-            .gauge-card { min-width: 92px; padding: 10px 14px; }
-            .clear-btn { width: 56px; height: 48px; font-size: 1.35rem; }
-            .fuel-pod-slot { height: 88px; }
-            .fuel-pod { width: 74px; height: 78px; }
-            .pod-value { font-size: 1.65rem; }
         }
 
         body.force-landscape { padding: 0; overflow: hidden; }
@@ -938,6 +923,62 @@
             pointer-events: none;
             z-index: 100;
         }
+
+        /* Mobile Responsive & Rotate Landscape Mode */
+        @media (max-width: 540px) {
+            body {
+                justify-content: flex-start;
+                padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+            }
+            .game-container { padding: 12px 10px; border-radius: 22px; gap: 10px; }
+            .header-bar { gap: 8px; }
+            .mode-selector { gap: 4px; padding: 4px; }
+            .mode-btn { min-height: 44px; padding: 7px 10px; font-size: clamp(0.78rem, 3.5vw, 0.9rem); }
+            .controls-group { gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+            .stat-badge { min-height: 40px; padding: 5px 8px; font-size: 0.9rem; }
+            .icon-btn { width: 44px; height: 44px; font-size: 1.15rem; }
+            .progress-wrapper { gap: 8px; }
+            .progress-text { min-width: 52px; font-size: 0.9rem; }
+            .launch-stage { padding: 10px 8px; gap: 8px; border-radius: 22px; }
+            .launch-hint { max-width: 100%; padding: 5px 10px; font-size: clamp(0.76rem, 3.6vw, 0.95rem); }
+            .rocket-upper-row { min-height: 0; gap: clamp(8px, 4vw, 16px); }
+            .rocket-drop-zone { width: clamp(112px, 38vw, 160px); height: clamp(190px, 56vw, 230px); }
+            .rocket-head { width: clamp(76px, 25vw, 96px); height: clamp(58px, 20vw, 74px); }
+            .rocket-head-number { font-size: clamp(1.2rem, 5vw, 1.45rem); padding: 4px 10px; }
+            .rocket-body { width: clamp(76px, 25vw, 96px); height: clamp(100px, 34vw, 126px); padding: 7px 8px; }
+            .rocket-fin-left, .rocket-fin-right { width: clamp(24px, 8vw, 30px); height: clamp(46px, 16vw, 58px); bottom: clamp(26px, 9vw, 32px); }
+            .rocket-fin-left { left: 14px; }
+            .rocket-fin-right { right: 14px; }
+            .rocket-thruster { width: clamp(44px, 15vw, 56px); height: 12px; }
+            .rocket-flame { height: 26px; }
+            .fuel-side-panel { gap: 10px; }
+            .gauge-card { min-width: 78px; padding: 8px 10px; border-radius: 18px; }
+            .gauge-icon { font-size: 1.2rem; }
+            .gauge-number { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+            .clear-btn { width: 52px; height: 48px; min-height: 48px; font-size: 1.25rem; border-radius: 16px; }
+            .fuel-dock { padding: 10px 6px 6px; gap: 6px; border-radius: 16px; }
+            .fuel-pod-slot { width: clamp(60px, 20vw, 74px); height: clamp(64px, 20vw, 78px); }
+            .fuel-pod { width: clamp(52px, 18vw, 68px); height: clamp(52px, 18vw, 68px); margin-top: 5px; }
+            .fuel-pod::before { top: -8px; left: 10px; width: 18px; height: 9px; }
+            .fuel-pod::after { top: 6px; right: 7px; width: 16px; height: 8px; }
+            .pod-value { font-size: clamp(1.15rem, 5vw, 1.45rem); margin-top: 7px; }
+            .celebration-screen { gap: 12px; padding: 14px 8px; }
+            .trophy-icon { font-size: clamp(3.5rem, 16vw, 5rem); }
+            .celebration-title { font-size: clamp(1.4rem, 6vw, 2rem); }
+            .final-stat-box { min-width: 110px; padding: 10px 14px; }
+            .final-stat-val { font-size: 1.5rem; }
+            .play-again-btn { min-height: 52px; padding: 12px 26px; font-size: 1.15rem; }
+        }
+
+        @media (max-width: 360px) {
+            .game-container { padding-right: 8px; padding-left: 8px; }
+            .header-bar { justify-content: center; }
+            .mode-selector, .controls-group { justify-content: center; }
+            .controls-group { gap: 5px; }
+            .stat-badge { gap: 4px; padding-right: 6px; padding-left: 6px; }
+            .rocket-upper-row { gap: 6px; }
+            .fuel-dock { gap: 4px; }
+        }
     </style>
 </head>
 <body>
@@ -959,6 +1000,9 @@
             </div>
 
             <div class="controls-group">
+                <a class="icon-btn back-btn" href="index.html" title="Back to games" aria-label="Back to games">
+                    ←
+                </a>
                 <div class="stat-badge" title="Stars">
                     <span>⭐</span>
                     <span id="star-count">0</span>
