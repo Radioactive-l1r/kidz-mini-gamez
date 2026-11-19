@@ -185,15 +185,48 @@
             .icon-btn { width: 38px; height: 38px; font-size: 1.15rem; }
             .station-arena { padding: 12px 8px 14px; gap: 12px; }
             .train-stage { min-height: 155px; }
-            .train-consist { gap: 4px; }
-            .locomotive { width: 92px; height: 96px; }
-            .smokestack { width: 18px; height: 20px; left: 16px; }
-            .engine-body { height: 74px; border-width: 3px; border-radius: 18px 14px 10px 10px; }
-            .picture-window { width: 64px; height: 58px; font-size: 2.35rem; border-width: 3px; border-radius: 12px; }
-            .coupler { width: 6px; height: 6px; margin-bottom: 16px; }
-            .letter-car { width: 52px; height: 68px; font-size: 1.85rem; border-width: 3px; border-radius: 12px; }
-            .wheel { width: 18px; height: 18px; border-width: 3px; }
-            .car-wheels { bottom: -11px; }
+            .train-stage .train-consist { width: 100%; min-width: 0; gap: 2px; }
+            .train-consist .locomotive { width: 92px; height: auto; min-width: 50px; flex: 0 1 92px; aspect-ratio: 92 / 96; }
+            .train-consist .smokestack {
+                width: clamp(11px, calc(5.1vw - 5.3px), 18px);
+                height: clamp(12px, calc(5.68vw - 5.9px), 20px);
+                left: clamp(10px, calc(4.55vw - 4.6px), 16px);
+            }
+            .train-consist .engine-body { height: auto; aspect-ratio: 92 / 74; border-width: 2px; border-radius: 12px 10px 8px 8px; }
+            .train-consist .picture-window {
+                width: 64px;
+                max-width: calc(100% - 8px);
+                height: auto;
+                aspect-ratio: 64 / 58;
+                font-size: clamp(1.43rem, calc(10.68vw - 11.33px), 2.35rem);
+                border-width: 2px;
+                border-radius: 8px;
+            }
+            .train-consist .coupler {
+                width: 6px;
+                min-width: 2px;
+                flex: 0 1 6px;
+                height: clamp(4px, calc(1.82vw - 1.8px), 6px);
+                margin-bottom: clamp(10px, calc(2.84vw + 0.7px), 16px);
+            }
+            .train-consist .letter-car {
+                width: 52px;
+                min-width: 28px;
+                flex: 1 1 52px;
+                height: auto;
+                aspect-ratio: 52 / 68;
+                font-size: clamp(1.13rem, calc(8.41vw - 8.92px), 1.85rem);
+                border-width: 2px;
+                border-radius: 8px;
+            }
+            .train-consist .letter-car.missing-slot,
+            .train-consist .letter-car.solved-car { border-width: 2px; }
+            .train-consist .wheel {
+                width: clamp(11px, calc(5.1vw - 5.3px), 18px);
+                height: clamp(11px, calc(5.1vw - 5.3px), 18px);
+                border-width: 2px;
+            }
+            .train-consist .car-wheels { bottom: clamp(-11px, calc(-2.05vw - 0.1px), -6.5px); }
             .crate-slot { height: 74px; }
             .letter-crate { width: 70px; height: 68px; font-size: 1.95rem; }
         }
